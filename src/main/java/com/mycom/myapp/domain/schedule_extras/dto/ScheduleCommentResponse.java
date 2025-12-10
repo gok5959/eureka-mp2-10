@@ -1,4 +1,4 @@
-package com.mycom.myapp.schedule.dto;
+package com.mycom.myapp.domain.schedule_extras.dto;
 
 import lombok.*;
 

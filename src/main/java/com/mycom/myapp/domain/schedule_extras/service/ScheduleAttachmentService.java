@@ -1,7 +1,7 @@
-package com.mycom.myapp.schedule.service;
+package com.mycom.myapp.domain.schedule_extras.service;
 
-import com.mycom.myapp.schedule.dto.AttachmentRequestDto;
-import com.mycom.myapp.schedule.dto.AttachmentResponseDto;
+import com.mycom.myapp.domain.schedule_extras.dto.AttachmentRequestDto;
+import com.mycom.myapp.domain.schedule_extras.dto.AttachmentResponseDto;
 
 import java.util.List;
 
