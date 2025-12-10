@@ -22,12 +22,6 @@ public class ScheduleComment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long scheduleId; // schedules FK
-
-    @Column(nullable = false)
-    private Long userId; // users FK
-
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 

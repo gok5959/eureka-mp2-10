@@ -22,9 +22,6 @@ public class ScheduleAttachment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false)
-    private Long scheduleId;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private FileType fileType;
