@@ -1,7 +1,7 @@
-package com.mycom.myapp.schedule.service;
+package com.mycom.myapp.domain.schedule_extras.service;
 
-import com.mycom.myapp.schedule.dto.ScheduleCommentCreateRequest;
-import com.mycom.myapp.schedule.dto.ScheduleCommentResponse;
+import com.mycom.myapp.domain.schedule_extras.dto.ScheduleCommentCreateRequest;
+import com.mycom.myapp.domain.schedule_extras.dto.ScheduleCommentResponse;
 
 import java.util.List;
 

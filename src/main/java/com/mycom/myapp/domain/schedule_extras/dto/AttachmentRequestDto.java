@@ -1,6 +1,6 @@
-package com.mycom.myapp.schedule.dto;
+package com.mycom.myapp.domain.schedule_extras.dto;
 
-import com.mycom.myapp.schedule.entity.enums.FileType;
+import com.mycom.myapp.domain.schedule_extras.entity.enums.FileType;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 

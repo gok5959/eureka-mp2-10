@@ -1,15 +1,12 @@
-package com.mycom.myapp.schedule.entity;
+package com.mycom.myapp.domain.schedule_extras.entity;
 
+import com.mycom.myapp.domain.schedule.entity.Schedule;
+import com.mycom.myapp.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-//@Entity
-//@Data
-//@Builder
-//@NoArgsConstructor
-//@AllArgsConstructor
 
 @Entity
 @Table(name = "schedule_attachments")
@@ -33,6 +30,16 @@ public class ScheduleComment {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
+
+    // 댓글 → 스케줄 (N:1)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "schedule_id")
+    private Schedule schedule;
+
+    // 댓글 → 유저 (N:1)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
