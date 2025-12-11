@@ -1,9 +1,14 @@
 package com.mycom.myapp.domain.schedule.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import com.mycom.myapp.domain.schedule.entity.ScheduleStatus;
 import com.mycom.myapp.domain.schedule.entity.Schedule;
+import com.mycom.myapp.domain.schedule.entity.ScheduleStatus;
+import com.mycom.myapp.domain.schedule_extras.dto.AttachmentResponseDto;
+import com.mycom.myapp.domain.schedule_extras.dto.ScheduleCommentResponse;
+import com.mycom.myapp.domain.schedule_extras.entity.ScheduleComment;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,10 +26,10 @@ public class ScheduleResponseDto {
     private Long id;
     private String title;
     private String description;
-    
+
     private Long ownerId;
     private Long groupId;
-    
+
     private LocalDateTime startAt;
     private LocalDateTime endAt;
     private String placeName;
@@ -33,46 +38,74 @@ public class ScheduleResponseDto {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    
-    
-    // 수정 필요
-//    private List<CommentDto~> comments;
 
-    // builder로 schedule 만들고
-    // 바로 SchedulerResponseDto.fromEntity(schedule)로 선언 가능
-    // 리스트/달력용 (댓글 없이)
+    private List<ScheduleCommentResponse> comments;
+    private List<AttachmentResponseDto> attachments;
+
+    // 목록/달력용 (댓글, 첨부 X)
     public static ScheduleResponseDto fromEntity(Schedule schedule) {
         return ScheduleResponseDto.builder()
                 .id(schedule.getId())
                 .title(schedule.getTitle())
                 .description(schedule.getDescription())
+                .ownerId(schedule.getOwner() != null ? schedule.getOwner().getId() : null)
+                .groupId(schedule.getGroup() != null ? schedule.getGroup().getId() : null)
                 .startAt(schedule.getStartAt())
                 .endAt(schedule.getEndAt())
                 .placeName(schedule.getPlaceName())
                 .status(schedule.getStatus())
                 .voteDeadlineAt(schedule.getVoteDeadlineAt())
-                .createdAt(schedule.getCreatedAt())   // BaseEntity에서 상속
+                .createdAt(schedule.getCreatedAt())
                 .updatedAt(schedule.getUpdatedAt())
                 .build();
     }
 
-//    // 상세용 (댓글까지)
-//    public static ScheduleResponseDto fromEntityWithComments(
-//            Schedule schedule,
-//            //List<CommentResponseDto> comments
-//    ) {
-//        return ScheduleResponseDto.builder()
-//                .id(schedule.getId())
-//                .title(schedule.getTitle())
-//                .description(schedule.getDescription())
-//                .startAt(schedule.getStartAt())
-//                .endAt(schedule.getEndAt())
-//                .placeName(schedule.getPlaceName())
-//                .status(schedule.getStatus())
-//                .voteDeadlineAt(schedule.getVoteDeadlineAt())
-//                .createdAt(schedule.getCreatedAt())
-//                .updatedAt(schedule.getUpdatedAt())
-//                .comments(comments)
-//                .build();
-//    }
+    // 상세용 (댓글 + 첨부파일)
+    public static ScheduleResponseDto fromEntityWithDetails(
+            Schedule schedule,
+            List<ScheduleComment> comments
+    ) {
+
+        List<ScheduleCommentResponse> commentDtos = comments.stream()
+                .map(c -> ScheduleCommentResponse.builder()
+                        .id(c.getId())
+                        .scheduleId(c.getSchedule().getId())
+                        .userId(c.getUser().getId())
+                        .content(c.getContent())
+                        .createdAt(c.getCreatedAt())
+                        .updatedAt(c.getUpdatedAt()) // ← 여기 수정!
+                        .build()
+                )
+                .collect(Collectors.toList());
+
+        List<AttachmentResponseDto> attachmentDtos = schedule.getAttachments().stream()
+                .map(a -> AttachmentResponseDto.builder()
+                        .id(a.getId())
+                        .fileType(a.getFileType())
+                        .fileUrl(a.getFileUrl())
+                        .originalName(a.getOriginalName())
+                        .fileSize(a.getFileSize())
+                        .contentType(a.getContentType())
+                        .createdAt(a.getCreatedAt())
+                        .build()
+                )
+                .collect(Collectors.toList());
+
+        return ScheduleResponseDto.builder()
+                .id(schedule.getId())
+                .title(schedule.getTitle())
+                .description(schedule.getDescription())
+                .ownerId(schedule.getOwner() != null ? schedule.getOwner().getId() : null)
+                .groupId(schedule.getGroup() != null ? schedule.getGroup().getId() : null)
+                .startAt(schedule.getStartAt())
+                .endAt(schedule.getEndAt())
+                .placeName(schedule.getPlaceName())
+                .status(schedule.getStatus())
+                .voteDeadlineAt(schedule.getVoteDeadlineAt())
+                .createdAt(schedule.getCreatedAt())
+                .updatedAt(schedule.getUpdatedAt())
+                .comments(commentDtos)
+                .attachments(attachmentDtos)
+                .build();
+    }
 }
