@@ -22,6 +22,12 @@ public interface ScheduleService {
     // 일정 삭제
     void deleteSchedule(Long id);
     
+    // 그룹 일정 목록
+    List<ScheduleResponseDto> getGroupScheduleList(Long groupId);
+
+    // 개인 일정 목록 (ownerId = 현재 로그인 유저)
+    List<ScheduleResponseDto> getPersonalScheduleList(Long ownerId);
+    
     // 투표 종료 후, 인원에 따라 상태 변경
     void closeVoting(Long scheduleId);
 }
