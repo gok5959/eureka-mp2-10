@@ -6,8 +6,12 @@ import com.mycom.myapp.domain.user.dto.UserSignupRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface UserService {
-    UserResponse createUser(UserSignupRequest userSignupRequest);
+    UserResponse insertUser(UserSignupRequest userSignupRequest);
     UserResponse findUserById(Long userId);
-    Page<UserResponse> findUsersByCondition(UserSearchCondition condition, Pageable pageable);
+    UserResponse findUserByEmail(String email);
+    Page<UserResponse> searchUsers(UserSearchCondition condition, Pageable pageable);
+
 }
