@@ -64,4 +64,8 @@ public class ScheduleParticipation {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+    public void changeStatus(ParticipationStatus status) {
+        this.status = status;
+    }
 }

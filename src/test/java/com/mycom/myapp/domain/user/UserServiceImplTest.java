@@ -1,13 +1,14 @@
-package com.mycom.myapp.domain.user.service;
+package com.mycom.myapp.domain.user;
 
-import com.mycom.myapp.domain.user.UserRole;
-import com.mycom.myapp.domain.user.dto.UserResponse;
-import com.mycom.myapp.domain.user.dto.UserSearchCondition;
-import com.mycom.myapp.domain.user.dto.UserSignupRequest;
-import com.mycom.myapp.domain.user.entity.User;
-import com.mycom.myapp.domain.user.exception.DuplicatedEmailException;
-import com.mycom.myapp.domain.user.exception.UserNotFoundException;
-import com.mycom.myapp.domain.user.repository.UserRepository;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,15 +16,21 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.*;
+import com.mycom.myapp.domain.user.dto.UserResponse;
+import com.mycom.myapp.domain.user.dto.UserSearchCondition;
+import com.mycom.myapp.domain.user.dto.UserSignupRequest;
+import com.mycom.myapp.domain.user.entity.User;
+import com.mycom.myapp.domain.user.exception.DuplicatedEmailException;
+import com.mycom.myapp.domain.user.exception.UserNotFoundException;
+import com.mycom.myapp.domain.user.repository.UserRepository;
+import com.mycom.myapp.domain.user.service.UserServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
