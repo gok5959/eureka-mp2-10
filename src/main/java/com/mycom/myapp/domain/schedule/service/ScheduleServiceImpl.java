@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.mycom.myapp.domain.group.entity.Group;
 import com.mycom.myapp.domain.participation.entity.ParticipationStatus;
 import com.mycom.myapp.domain.participation.repository.ScheduleParticipationRepository;
 import com.mycom.myapp.domain.schedule.dto.ScheduleRequestDto;
@@ -12,7 +13,8 @@ import com.mycom.myapp.domain.schedule.dto.ScheduleResponseDto;
 import com.mycom.myapp.domain.schedule.entity.Schedule;
 import com.mycom.myapp.domain.schedule.entity.ScheduleStatus;
 import com.mycom.myapp.domain.schedule.repository.ScheduleRepository;
-import com.mycom.myapp.domain.schedule_extras.entity.ScheduleComment;
+import com.mycom.myapp.domain.user.entity.User;
+import com.mycom.myapp.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +25,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final ScheduleParticipationRepository participationRepository;
+    private final UserRepository userRepository;
+    //private final GroupRepository groupRepository;
     //private final ScheduleCommentRepository scheduleCommentRepository; // 🔹 댓글 레포지토리 추가
 
     /**
@@ -35,6 +39,21 @@ public class ScheduleServiceImpl implements ScheduleService {
      */
     @Override
     public Long createSchedule(ScheduleRequestDto dto) {
+    	
+        // 1. owner 설정 (무조건 필요)
+        if (dto.getOwnerId() == null) {
+            throw new IllegalArgumentException("ownerId는 필수입니다.");
+        }
+
+        User owner = userRepository.findById(dto.getOwnerId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. id=" + dto.getOwnerId()));
+
+        // 2. group 설정 (개인 일정이면 null, 그룹 일정이면 path에서 온 groupId)
+//        Group group = null;
+//        if (dto.getGroupId() != null) {
+//            group = groupRepository.findById(dto.getGroupId())
+//            		.orElseThrow(() -> new IllegalArgumentException("해당 그룹이 없습니다. id=" + dto.getGroupId()));
+//        }
 
         // 투표 기능 사용 여부에 따라 초기 상태 결정
         ScheduleStatus status = dto.isUserVoting()

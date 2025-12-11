@@ -22,6 +22,73 @@ import lombok.RequiredArgsConstructor;
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
+    
+    // =========================
+    //  개인 일정 API
+    // =========================
+
+    /**
+     * 개인 일정 생성
+     * POST /personal-schedules
+     */
+    @PostMapping("/personal-schedules")
+    public ResponseEntity<Long> createPersonalSchedule(
+            @RequestBody ScheduleRequestDto dto
+    ) {
+        // 개인 일정이므로 groupId 는 null로 둔다 (또는 무시)
+        dto.setGroupId(null);
+
+        Long id = scheduleService.createSchedule(dto);
+        return ResponseEntity.ok(id);
+    }
+
+    /**
+     * 개인 일정 목록 조회
+     * GET /personal-schedules
+     */
+    @GetMapping("/personal-schedules")
+    public ResponseEntity<List<ScheduleResponseDto>> getPersonalScheduleList() {
+        // TODO: 현재 로그인 유저 기준으로 필터링 (ownerId)
+        List<ScheduleResponseDto> list = scheduleService.getScheduleList();
+        return ResponseEntity.ok(list);
+    }
+
+    /**
+     * 개인 일정 상세 조회
+     * GET /personal-schedules/{scheduleId}
+     */
+    @GetMapping("/personal-schedules/{scheduleId}")
+    public ResponseEntity<ScheduleResponseDto> getPersonalScheduleDetail(
+            @PathVariable("scheduleId") Long scheduleId
+    ) {
+        ScheduleResponseDto dto = scheduleService.getScheduleDetail(scheduleId);
+        return ResponseEntity.ok(dto);
+    }
+
+    /**
+     * 개인 일정 수정
+     * PUT /personal-schedules/{scheduleId}
+     */
+    @PutMapping("/personal-schedules/{scheduleId}")
+    public ResponseEntity<Long> updatePersonalSchedule(
+            @PathVariable("scheduleId") Long scheduleId,
+            @RequestBody ScheduleRequestDto dto
+    ) {
+        Long updatedId = scheduleService.updateSchedule(scheduleId, dto);
+        return ResponseEntity.ok(updatedId);
+    }
+
+    /**
+     * 개인 일정 삭제
+     * DELETE /personal-schedules/{scheduleId}
+     */
+    @DeleteMapping("/personal-schedules/{scheduleId}")
+    public ResponseEntity<Void> deletePersonalSchedule(
+            @PathVariable("scheduleId") Long scheduleId
+    ) {
+        scheduleService.deleteSchedule(scheduleId);
+        return ResponseEntity.noContent().build();
+    }
 
     // =========================
     //  그룹 일정 API
@@ -93,70 +160,5 @@ public class ScheduleController {
         return ResponseEntity.noContent().build();
     }
 
-    // =========================
-    //  개인 일정 API
-    // =========================
 
-    /**
-     * 개인 일정 생성
-     * POST /personal-schedules
-     */
-    @PostMapping("/personal-schedules")
-    public ResponseEntity<Long> createPersonalSchedule(
-            @RequestBody ScheduleRequestDto dto
-    ) {
-        // 개인 일정이므로 groupId 는 null로 둔다 (또는 무시)
-        dto.setGroupId(null);
-
-        Long id = scheduleService.createSchedule(dto);
-        return ResponseEntity.ok(id);
-    }
-
-    /**
-     * 개인 일정 목록 조회
-     * GET /personal-schedules
-     */
-    @GetMapping("/personal-schedules")
-    public ResponseEntity<List<ScheduleResponseDto>> getPersonalScheduleList() {
-        // TODO: 현재 로그인 유저 기준으로 필터링 (ownerId)
-        List<ScheduleResponseDto> list = scheduleService.getScheduleList();
-        return ResponseEntity.ok(list);
-    }
-
-    /**
-     * 개인 일정 상세 조회
-     * GET /personal-schedules/{scheduleId}
-     */
-    @GetMapping("/personal-schedules/{scheduleId}")
-    public ResponseEntity<ScheduleResponseDto> getPersonalScheduleDetail(
-            @PathVariable("scheduleId") Long scheduleId
-    ) {
-        ScheduleResponseDto dto = scheduleService.getScheduleDetail(scheduleId);
-        return ResponseEntity.ok(dto);
-    }
-
-    /**
-     * 개인 일정 수정
-     * PUT /personal-schedules/{scheduleId}
-     */
-    @PutMapping("/personal-schedules/{scheduleId}")
-    public ResponseEntity<Long> updatePersonalSchedule(
-            @PathVariable("scheduleId") Long scheduleId,
-            @RequestBody ScheduleRequestDto dto
-    ) {
-        Long updatedId = scheduleService.updateSchedule(scheduleId, dto);
-        return ResponseEntity.ok(updatedId);
-    }
-
-    /**
-     * 개인 일정 삭제
-     * DELETE /personal-schedules/{scheduleId}
-     */
-    @DeleteMapping("/personal-schedules/{scheduleId}")
-    public ResponseEntity<Void> deletePersonalSchedule(
-            @PathVariable("scheduleId") Long scheduleId
-    ) {
-        scheduleService.deleteSchedule(scheduleId);
-        return ResponseEntity.noContent().build();
-    }
 }
