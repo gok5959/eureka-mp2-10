@@ -2,11 +2,15 @@ package com.mycom.myapp.domain.user.dto;
 
 import com.mycom.myapp.domain.user.UserRole;
 import com.mycom.myapp.domain.user.entity.User;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserResponse {
     private Long id;
     private String email;
