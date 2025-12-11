@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import com.mycom.myapp.domain.schedule.entity.Schedule;
+import com.mycom.myapp.domain.user.entity.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -47,9 +48,9 @@ public class ScheduleParticipation {
     @JoinColumn(name = "schedule_id", nullable = false)
     private Schedule schedule;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     // 참여 상태 (INVITED / ACCEPTED / DECLINED)
     @Enumerated(EnumType.STRING)

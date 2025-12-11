@@ -21,7 +21,7 @@ public class ParticipationStatusResponseDto {
     public static ParticipationStatusResponseDto fromEntity(ScheduleParticipation participation) {
         return ParticipationStatusResponseDto.builder()
                 .scheduleId(participation.getSchedule().getId())
-                //.userId(participation.getUser().getId())
+                .userId(participation.getUser().getId())
                 .status(participation.getStatus())
                 .build();
     }
