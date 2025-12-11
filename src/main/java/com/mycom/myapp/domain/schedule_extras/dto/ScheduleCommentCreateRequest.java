@@ -8,6 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ScheduleCommentCreateRequest {
-    private Long userId;
+
+//    private Long scheduleId;
+//    private Long userId;
     private String content;
 }

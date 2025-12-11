@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Table(name = "schedule_attachments")
+@Table(name = "schedule_comments")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -38,7 +38,7 @@ public class ScheduleComment {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 
 
 
