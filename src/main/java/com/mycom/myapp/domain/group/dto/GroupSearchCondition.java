@@ -5,5 +5,5 @@ import lombok.Data;
 
 @Data
 public class GroupSearchCondition {
-    private GroupMemberRole role;
+    private String keyword;
 }
