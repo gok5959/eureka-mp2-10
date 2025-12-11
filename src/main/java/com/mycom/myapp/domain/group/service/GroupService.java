@@ -1,9 +1,9 @@
 package com.mycom.myapp.domain.group.service;
 
-import com.mycom.myapp.common.dto.PageResponse;
 import com.mycom.myapp.domain.group.dto.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.awt.print.Pageable;
 
 public interface GroupService {
 
@@ -15,12 +15,13 @@ public interface GroupService {
 
     void deleteGroupByIdAndUserId(Long groupId, Long currentUserId);
 
-    PageResponse<GroupListResponse> findGroupsByUserId(GroupSearchCondition condition,
-                                                           Long userId,
-                                                           Pageable pageable);
 
-    GroupDetailResponse findGroupDetailByIdAndUserId(Long groupId, Long userId);
+    GroupDetailResponse findGroupDetailById(Long groupId, Long currentUserId);
 
-    PageResponse<GroupMemberResponse> findGroupMembersByGroupId(Long groupId,
-                                                                Pageable pageable);
+    Page<GroupListResponse> searchGroupsByUserId(GroupSearchCondition condition,
+                                                 Long userId,
+                                                 Pageable pageable);
+
+    Page<GroupListResponse> searchGroups(GroupSearchCondition condition,
+                                         Pageable pageable);
 }
