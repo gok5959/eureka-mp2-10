@@ -41,6 +41,23 @@ public class ParticipationServiceImpl implements ParticipationService {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new IllegalArgumentException("일정이 존재하지 않습니다. id=" + scheduleId));
 
+        // 🔹 1) 투표 기능이 있는 일정인지 확인
+        boolean votingEnabled = (schedule.getVoteDeadlineAt() != null || schedule.getMinParticipants() != null);
+        if (!votingEnabled) {
+            throw new IllegalStateException("투표 기능이 없는 일정입니다. scheduleId=" + scheduleId);
+        }
+
+        // 🔹 2) 현재 상태가 VOTING 인지 확인
+        if (!schedule.isVoting()) {  // => status != VOTING
+            throw new IllegalStateException("이미 투표가 종료된 일정입니다. scheduleId=" + scheduleId);
+        }
+
+        // 🔹 3) (옵션) 마감 시간 체크
+        if (schedule.getVoteDeadlineAt() != null &&
+            schedule.getVoteDeadlineAt().isBefore(java.time.LocalDateTime.now())) {
+            throw new IllegalStateException("투표 마감 시간이 지났습니다. scheduleId=" + scheduleId);
+        }
+        
         // 유저 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다. id=" + userId));

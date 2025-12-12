@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.mycom.myapp.domain.participation.dto.ParticipationStatusResponseDto;
 import com.mycom.myapp.domain.schedule.entity.Schedule;
 import com.mycom.myapp.domain.schedule.entity.ScheduleStatus;
 import com.mycom.myapp.domain.schedule_extras.dto.AttachmentResponseDto;
@@ -41,6 +42,8 @@ public class ScheduleResponseDto {
 
     private List<ScheduleCommentResponse> comments;
     private List<AttachmentResponseDto> attachments;
+    
+    private List<ParticipationStatusResponseDto> participations;
 
     // 목록/달력용 (댓글, 첨부 X)
     public static ScheduleResponseDto fromEntity(Schedule schedule) {
@@ -65,7 +68,6 @@ public class ScheduleResponseDto {
             Schedule schedule,
             List<ScheduleComment> comments
     ) {
-
         List<ScheduleCommentResponse> commentDtos = comments.stream()
                 .map(c -> ScheduleCommentResponse.builder()
                         .id(c.getId())
@@ -73,7 +75,7 @@ public class ScheduleResponseDto {
                         .userId(c.getUser().getId())
                         .content(c.getContent())
                         .createdAt(c.getCreatedAt())
-                        .updatedAt(c.getUpdatedAt()) // ← 여기 수정!
+                        .updatedAt(c.getUpdatedAt())
                         .build()
                 )
                 .collect(Collectors.toList());
@@ -91,6 +93,11 @@ public class ScheduleResponseDto {
                 )
                 .collect(Collectors.toList());
 
+        // ✅ 참여자 리스트 매핑
+        List<ParticipationStatusResponseDto> participationDtos = schedule.getParticipations().stream()
+                .map(ParticipationStatusResponseDto::fromEntity)
+                .collect(Collectors.toList());
+
         return ScheduleResponseDto.builder()
                 .id(schedule.getId())
                 .title(schedule.getTitle())
@@ -106,6 +113,8 @@ public class ScheduleResponseDto {
                 .updatedAt(schedule.getUpdatedAt())
                 .comments(commentDtos)
                 .attachments(attachmentDtos)
+                .participations(participationDtos)   // ✅ 여기!
                 .build();
     }
+
 }

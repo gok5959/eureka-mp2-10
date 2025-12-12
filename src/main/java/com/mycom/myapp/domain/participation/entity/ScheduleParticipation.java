@@ -1,10 +1,6 @@
 package com.mycom.myapp.domain.participation.entity;
 
-import java.time.LocalDateTime;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
+import com.mycom.myapp.domain.schedule.entity.BaseEntity;
 import com.mycom.myapp.domain.schedule.entity.Schedule;
 import com.mycom.myapp.domain.user.entity.User;
 
@@ -24,6 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(
@@ -36,10 +33,11 @@ import lombok.NoArgsConstructor;
     }
 )
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ScheduleParticipation {
+public class ScheduleParticipation extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -56,16 +54,9 @@ public class ScheduleParticipation {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ParticipationStatus status;
-
-    @CreatedDate
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
     
     public void changeStatus(ParticipationStatus status) {
         this.status = status;
     }
+    
 }

@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mycom.myapp.domain.group.entity.Group;
+import com.mycom.myapp.domain.participation.entity.ScheduleParticipation;
 import com.mycom.myapp.domain.schedule_extras.entity.ScheduleAttachment;
+import com.mycom.myapp.domain.schedule_extras.entity.ScheduleComment;
 import com.mycom.myapp.domain.user.entity.User;
 
 import jakarta.persistence.CascadeType;
@@ -85,7 +87,22 @@ public class Schedule extends BaseEntity{
 	@Column(name = "min_participants")
 	private Integer minParticipants;
 	
+	@Builder.Default
+	@OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ScheduleComment> comments = new ArrayList<>();
+
+	public void addComment(ScheduleComment comment) {
+	    comments.add(comment);
+	    comment.setSchedule(this);
+	}
+
+	public void removeComment(ScheduleComment comment) {
+	    comments.remove(comment);
+	    comment.setSchedule(null);
+	}
+	
 	// 첨부 파일
+	@Builder.Default
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ScheduleAttachment> attachments = new ArrayList<>();
 
@@ -97,6 +114,24 @@ public class Schedule extends BaseEntity{
     public void removeAttachment(ScheduleAttachment attachment) {
         attachments.remove(attachment);
         attachment.setSchedule(null);
+    }
+    
+
+    // ================================
+    //  참여 인원 (ScheduleParticipation)
+    // ================================
+    @Builder.Default
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ScheduleParticipation> participations = new ArrayList<>();
+
+    public void addParticipation(ScheduleParticipation participation) {
+        participations.add(participation);
+        participation.setSchedule(this);
+    }
+
+    public void removeParticipation(ScheduleParticipation participation) {
+        participations.remove(participation);
+        participation.setSchedule(null);
     }
 	
 	public boolean isVoting() {

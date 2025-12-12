@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mycom.myapp.domain.schedule.dto.ScheduleRequestDto;
@@ -47,9 +48,9 @@ public class ScheduleController {
      * GET /personal-schedules
      */
     @GetMapping("/personal-schedules")
-    public ResponseEntity<List<ScheduleResponseDto>> getPersonalScheduleList() {
-        // TODO: 현재 로그인 유저 기준으로 필터링 (ownerId)
-        List<ScheduleResponseDto> list = scheduleService.getScheduleList();
+    public ResponseEntity<List<ScheduleResponseDto>> getPersonalScheduleList(@RequestParam("ownerId") Long ownerId) {
+        // ownerId => @AuthenticationPrincipal
+        List<ScheduleResponseDto> list = scheduleService.getPersonalScheduleList(ownerId);
         return ResponseEntity.ok(list);
     }
 
@@ -118,8 +119,7 @@ public class ScheduleController {
     public ResponseEntity<List<ScheduleResponseDto>> getGroupScheduleList(
             @PathVariable("groupId") Long groupId
     ) {
-        // TODO: groupId 기준으로 필터링하는 메서드로 변경 (예: scheduleService.getGroupSchedules(groupId))
-        List<ScheduleResponseDto> list = scheduleService.getScheduleList();
+        List<ScheduleResponseDto> list = scheduleService.getGroupScheduleList(groupId);
         return ResponseEntity.ok(list);
     }
 
