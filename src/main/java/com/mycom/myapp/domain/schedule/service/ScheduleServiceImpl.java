@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mycom.myapp.domain.group.entity.Group;
+import com.mycom.myapp.domain.group.repository.GroupRepository;
 import com.mycom.myapp.domain.participation.entity.ParticipationStatus;
 import com.mycom.myapp.domain.participation.repository.ScheduleParticipationRepository;
 import com.mycom.myapp.domain.schedule.dto.ScheduleRequestDto;
@@ -26,7 +27,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final ScheduleParticipationRepository participationRepository;
     private final UserRepository userRepository;
-    //private final GroupRepository groupRepository;
+    private final GroupRepository groupRepository;
     //private final ScheduleCommentRepository scheduleCommentRepository; // 🔹 댓글 레포지토리 추가
 
     /**
@@ -49,11 +50,11 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. id=" + dto.getOwnerId()));
 
         // 2. group 설정 (개인 일정이면 null, 그룹 일정이면 path에서 온 groupId)
-//        Group group = null;
-//        if (dto.getGroupId() != null) {
-//            group = groupRepository.findById(dto.getGroupId())
-//            		.orElseThrow(() -> new IllegalArgumentException("해당 그룹이 없습니다. id=" + dto.getGroupId()));
-//        }
+        Group group = null;
+        if (dto.getGroupId() != null) {
+            group = groupRepository.findById(dto.getGroupId())
+            		.orElseThrow(() -> new IllegalArgumentException("해당 그룹이 없습니다. id=" + dto.getGroupId()));
+        }
 
         // 투표 기능 사용 여부에 따라 초기 상태 결정
         ScheduleStatus status = dto.isUserVoting()
@@ -64,6 +65,9 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .title(dto.getTitle())
                 .description(dto.getDescription())
                 // TODO: owner, group 세팅은 나중에 Security/Group 연관관계 붙이면서 처리
+                .owner(owner)
+                .group(group)
+                //
                 .startAt(dto.getStartAt())
                 .endAt(dto.getEndAt())
                 .placeName(dto.getPlaceName())
