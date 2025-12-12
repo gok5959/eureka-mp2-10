@@ -1,13 +1,15 @@
 package com.mycom.myapp.domain.schedule_extras.service;
 
 
-import com.mycom.myapp.domain.schedule.entity.Schedule;
-import com.mycom.myapp.domain.schedule_extras.dto.ScheduleCommentResponse;
-import com.mycom.myapp.domain.schedule_extras.entity.ScheduleComment;
-import com.mycom.myapp.domain.schedule_extras.repository.ScheduleCommentRepository;
-import com.mycom.myapp.domain.schedule_extras.repository.ScheduleRepository;
-import com.mycom.myapp.domain.schedule_extras.repository.UserRepository;
-import com.mycom.myapp.domain.user.entity.User;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,11 +17,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
+import com.mycom.myapp.domain.schedule.entity.Schedule;
+import com.mycom.myapp.domain.schedule.repository.ScheduleRepository;
+import com.mycom.myapp.domain.schedule_extras.dto.ScheduleCommentResponse;
+import com.mycom.myapp.domain.schedule_extras.entity.ScheduleComment;
+import com.mycom.myapp.domain.schedule_extras.repository.ScheduleCommentRepository;
+import com.mycom.myapp.domain.user.entity.User;
+import com.mycom.myapp.domain.user.repository.UserRepository;
 
 class ScheduleCommentServiceTest {
 
