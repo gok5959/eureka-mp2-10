@@ -28,4 +28,11 @@ public class GcpStorageService {
         return String.format("gs://%s/%s", bucketName, fileName);
     }
 
+    public void deleteFile(String fileUrl) {
+        String path = fileUrl.replace("gs://" + bucketName + "/", "");
+
+        BlobId blobId = BlobId.of(bucketName, path);
+        storage.delete(blobId);
+    }
+
 }

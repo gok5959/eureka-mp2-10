@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class AttachmentRequestDto {
 
-    private Long scheduleId;
+//    private Long scheduleId;
     private FileType fileType;
     private MultipartFile file; // 실제 업로드 파일
 

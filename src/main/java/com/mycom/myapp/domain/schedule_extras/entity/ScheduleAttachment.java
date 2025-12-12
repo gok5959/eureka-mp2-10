@@ -26,8 +26,13 @@ public class ScheduleAttachment {
     @Column(nullable = false)
     private FileType fileType;
 
+    // 프론트용 (https)
     @Column(nullable = false)
     private String fileUrl;
+
+    // GCP 삭제용 (ex: attachments/uuid_file.png)
+    @Column(nullable = false)
+    private String gcsPath;
 
     private String originalName;
     private Long fileSize;
@@ -45,5 +50,10 @@ public class ScheduleAttachment {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 
 }
