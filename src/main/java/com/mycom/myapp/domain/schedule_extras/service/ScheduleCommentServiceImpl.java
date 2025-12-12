@@ -37,7 +37,7 @@ public class ScheduleCommentServiceImpl implements ScheduleCommentService {
                 .schedule(schedule)
                 .user(user)
                 .content(content)
-                .createdAt(LocalDateTime.now())
+//                .createdAt(LocalDateTime.now())
                 .build();
 
         ScheduleComment saved = commentRepository.save(comment);
@@ -78,7 +78,7 @@ public class ScheduleCommentServiceImpl implements ScheduleCommentService {
         }
 
         comment.setContent(content);
-        comment.setUpdatedAt(LocalDateTime.now());
+//        comment.setUpdatedAt(LocalDateTime.now());
 
         ScheduleComment updated = commentRepository.save(comment);
 
