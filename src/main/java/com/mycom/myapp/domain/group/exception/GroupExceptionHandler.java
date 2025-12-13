@@ -10,6 +10,10 @@ import java.util.Map;
 @RestControllerAdvice(basePackages = "com.mycom.myapp.domain.group")
 public class GroupExceptionHandler {
 
+    /* =========================
+      Group Exception
+      ========================= */
+
     @ExceptionHandler(GroupNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleGroupNotFound(GroupNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -19,6 +23,22 @@ public class GroupExceptionHandler {
     @ExceptionHandler(GroupPermissionDeniedException.class)
     public ResponseEntity<Map<String, Object>> handlePermissionDenied(GroupPermissionDeniedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of("message", ex.getMessage()));
+    }
+
+    /* =========================
+      GroupMember Exception
+      ========================= */
+
+    @ExceptionHandler(GroupMemberNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleGroupMemberNotFound(GroupMemberNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(GroupMemberAddDuplicateException.class)
+    public ResponseEntity<Map<String, Object>> handleGroupMemberDuplicate(GroupMemberAddDuplicateException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Map.of("message", ex.getMessage()));
     }
 }
