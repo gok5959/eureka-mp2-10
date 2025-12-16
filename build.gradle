@@ -55,6 +55,11 @@ dependencies {
     runtimeOnly  'io.jsonwebtoken:jjwt-impl:0.12.5'
     runtimeOnly  'io.jsonwebtoken:jjwt-jackson:0.12.5'
 
+    
+    // 임시
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    
 }
 
 tasks.named('test') {
