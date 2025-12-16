@@ -125,7 +125,7 @@ public class ScheduleController {
 //    }
     
 
-	@GetMapping("/personal-schedules")
+//	@GetMapping("/personal-schedules")
 	public ResponseEntity<List<ScheduleResponseDto>> getPersonalScheduleList(Authentication auth) {
 	    Long userId = CurrentUser.idOrDev(auth, 1L); // ✅ 무조건 1번으로 테스트 가능
 	    System.out.println("userId = " + userId);

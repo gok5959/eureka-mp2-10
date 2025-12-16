@@ -18,9 +18,21 @@ public class UserExceptionHandler {
     }
 
     @ExceptionHandler(DuplicatedEmailException.class)
-    public ResponseEntity<Map<String, Object>> handleDuplicatedEmailException(UserNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("message", ex.getMessage()));
+    public ResponseEntity<Map<String, Object>> handleDuplicatedEmailException(DuplicatedEmailException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                        "message", ex.getMessage(),
+                        "code", "USER_DUPLICATED_EMAIL"
+                ));
+    }
+
+    @ExceptionHandler(SignupValidationException.class)
+    public ResponseEntity<Map<String, Object>> handleSignupValidation(SignupValidationException ex) {
+        return ResponseEntity.badRequest()
+                .body(Map.of(
+                        "message", ex.getMessage(),
+                        "code", "USER_SIGNUP_INVALID"
+                ));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
