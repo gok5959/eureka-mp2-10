@@ -63,6 +63,7 @@ public class GroupController {
         GroupDetailResponse result = groupService.findGroupDetailById(groupId, currentUserId);
         return ResponseEntity.ok(result);
     }
+    
     // 사용자별 그룹 리스트 조회
     @GetMapping("/users")
     public ResponseEntity<Page<GroupListResponse>> getUserGroups(

@@ -55,6 +55,12 @@
     const list = Array.isArray(data) ? data : data.content || data.data || [];
     state.schedules = list.map(normalizeScheduleDto).filter(Boolean);
   }
+  
+  async function loadGroupMembers() {
+	  const data = await fetchJson(`/groups/${state.groupId}/members?page=0&size=50`);
+	  const arr = Array.isArray(data) ? data : (data.content || data.data || []);
+	  state.members = arr;
+	}
 
   function renderMembers() {
     const ul = $("memberList");
@@ -125,6 +131,7 @@
     try {
       await loadGroupDetail();
       await loadGroupSchedules();
+      await loadGroupMembers();
       renderMembers();
       renderUpcomingSchedules();
       initCalendar();
