@@ -238,9 +238,19 @@
       li.className = "list-group-item";
       li.style.cursor = "pointer";
       li.textContent = s.title;
+      // li.addEventListener("click", () => {
+      //   window.location.href = `/group-schedules/${s.id}`;
+      // });
+      /** 추가2 **/
       li.addEventListener("click", () => {
-        window.location.href = `/group-schedules/${s.id}`;
+        const params = new URLSearchParams();
+        params.set("scheduleId", s.id);
+        params.set("groupId", state.groupId);
+
+        window.location.href = `/pages/schedule-detail.html?${params.toString()}`;
       });
+
+      /** 여기까지 **/
       ul.appendChild(li);
     });
   }
@@ -264,14 +274,40 @@
         center: "title",
         right: "dayGridMonth,timeGridWeek,timeGridDay",
       },
-      events: [],
+
+      events: state.schedules.map((s) => ({
+        id: s.id,
+        title: s.title,
+        start: s.startAt,
+        end: s.endAt,
+      })),
+      /** 추가2 **/
       eventClick: (info) => {
-        window.location.href = `/group-schedules/${info.event.id}`;
+        const params = new URLSearchParams();
+        params.set("scheduleId", info.event.id);
+        params.set("groupId", state.groupId);
+
+        window.location.href = `/pages/schedule-detail.html?${params.toString()}`;
       },
+
+      /** 여기까지 **/
     });
 
     state.calendar.render();
   }
+
+
+  /** 추가1 **/
+  function bindAddScheduleButtons() {
+    const goGroupScheduleForm = () => {
+      window.location.href = `/pages/schedule-form.html?groupId=${state.groupId}`;
+    };
+
+    $("btn-header-add-schedule")?.addEventListener("click", goGroupScheduleForm);
+    $("btn-side-add-schedule")?.addEventListener("click", goGroupScheduleForm);
+  }
+
+  /** 여기까지 **/
 
   function refreshCalendar() {
     if (!state.calendar) return;
@@ -368,7 +404,15 @@
       state.currentUserId = getCurrentUserId();
       state.groupId = getGroupId();
 
-      // 1) 빈 화면 방지: 달력 먼저
+
+      // 디버깅 로그
+      console.log("currentUserId:", state.currentUserId);
+      console.log("groupId:", state.groupId);
+
+      /** 추가1 **/
+      bindAddScheduleButtons();
+
+      // 1) 빈 화면 방지: 일단 달력부터(빈 이벤트로) 띄움
       initCalendar();
 
       // 2) 데이터 로딩

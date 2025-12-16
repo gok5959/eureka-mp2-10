@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>일정 등록 / 수정</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+  />
+
+  <style>
+    body {
+      background: #f6f7fb;
+    }
+    .page-container {
+      max-width: 720px;
+      margin: 40px auto;
+    }
+    .card {
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      border: none;
+    }
+    .form-label {
+      font-weight: 600;
+    }
+    .section-title {
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+    .hidden {
+      display: none !important;
+    }
+
+
+
+  </style>
+</head>
+<body>
+
+
+<div class="page-container">
+  <div class="card">
+    <div class="card-body p-4">
+
+      <h3 id="pageTitle" class="section-title">일정 등록</h3>
+
+      <form id="scheduleForm">
+
+        <div class="mb-3">
+          <label class="form-label">제목</label>
+          <input type="text" id="title" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">설명</label>
+          <textarea id="description" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">장소</label>
+          <input type="text" id="placeName" class="form-control" />
+        </div>
+
+        <div class="row mb-3">
+          <div class="col">
+            <label class="form-label">시작</label>
+            <input type="datetime-local" id="startAt" class="form-control" required />
+          </div>
+          <div class="col">
+            <label class="form-label">종료</label>
+            <input type="datetime-local" id="endAt" class="form-control" required />
+          </div>
+        </div>
+
+        <!-- 투표 (그룹 일정일 때만 JS에서 노출) -->
+        <!-- 투표 체크박스 -->
+        <div class="mb-3" id="useVotingLabel">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="useVoting" />
+            <label class="form-check-label">투표 사용</label>
+          </div>
+        </div>
+
+        <div id="votingSection" class="mb-3 hidden">
+          <div class="row">
+            <div class="col">
+              <input
+                      type="number"
+                      id="minParticipants"
+                      class="form-control"
+                      placeholder="최소 인원"
+              />
+            </div>
+            <div class="col">
+              <input
+                      type="datetime-local"
+                      id="voteDeadlineAt"
+                      class="form-control"
+              />
+            </div>
+          </div>
+        </div>
+
+<!--        <div id="participantsSection" class="mb-3 hidden">-->
+<!--          <input-->
+<!--                  type="text"-->
+<!--                  id="participants"-->
+<!--                  class="form-control"-->
+<!--                  placeholder="참여자 ID (예: 2,3,5)"-->
+<!--          />-->
+<!--        </div>-->
+
+        <div class="mb-4">
+          <label class="form-label">첨부파일</label>
+          <input type="file" id="files" class="form-control" multiple />
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+          <button type="submit" class="btn btn-primary px-4">
+            저장
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 🔥 순서 중요 -->
+<script src="/js/auth.js"></script>
+<script type="module" src="/js/schedule-form.js"></script>
+
+</body>
+</html>
+

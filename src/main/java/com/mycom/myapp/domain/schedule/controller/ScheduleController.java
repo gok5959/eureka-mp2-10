@@ -35,8 +35,10 @@ public class ScheduleController {
     @PostMapping("/groups/{groupId}/schedules")
     public ResponseEntity<Long> createGroupSchedule(
             @PathVariable("groupId") Long groupId,
+            @RequestParam("currentUserId") Long currentUserId,
             @RequestBody ScheduleRequestDto dto
     ) {
+        dto.setOwnerId(currentUserId);
         // 그룹 일정이므로 DTO에 groupId 세팅
         dto.setGroupId(groupId);
 
@@ -104,8 +106,10 @@ public class ScheduleController {
      */
     @PostMapping("/personal-schedules")
     public ResponseEntity<Long> createPersonalSchedule(
+            @RequestParam("currentUserId") Long currentUserId,
             @RequestBody ScheduleRequestDto dto
     ) {
+        dto.setOwnerId(currentUserId);
         // 개인 일정이므로 groupId 는 null로 둔다 (또는 무시)
         dto.setGroupId(null);
 

@@ -246,8 +246,18 @@
       li.appendChild(bottom);
 
       li.addEventListener("click", () => {
-        const base = s.isPersonal ? "/personal-schedules" : "/group-schedules";
-        window.location.href = `${base}/${s.id}`;
+        // const base = s.isPersonal ? "/personal-schedules" : "/group-schedules";
+        // window.location.href = `${base}/${s.id}`;
+        /** 수정 **/
+        const params = new URLSearchParams();
+        params.set("scheduleId", s.id);
+
+        if (!s.isPersonal && s.groupId) {
+          params.set("groupId", s.groupId);
+        }
+
+        window.location.href = `/pages/schedule-detail.html?${params.toString()}`;
+        /** 수정 **/
       });
 
       ul.appendChild(li);
@@ -331,9 +341,21 @@
       events: buildCalendarEvents(),
 
       eventClick: (info) => {
+        // const ext = info.event.extendedProps || {};
+        // const base = ext.isPersonal ? "/personal-schedules" : "/group-schedules";
+        // window.location.href = `${base}/${info.event.id}`;
+        /** 수정 **/
         const ext = info.event.extendedProps || {};
-        const base = ext.isPersonal ? "/personal-schedules" : "/group-schedules";
-        window.location.href = `${base}/${info.event.id}`;
+        const params = new URLSearchParams();
+
+        params.set("scheduleId", info.event.id);
+
+        if (!ext.isPersonal && ext.groupId) {
+          params.set("groupId", ext.groupId);
+        }
+
+        window.location.href = `/pages/schedule-detail.html?${params.toString()}`;
+        /** 수정 **/
       },
     });
 
@@ -352,7 +374,7 @@
   function bindButtons() {
     const goScheduleForm = () => {
       // TODO: 실제 일정 생성 페이지 URL로 변경
-      window.location.href = "/schedules/new"; // 임시
+      window.location.href = "/pages/schedule-form.html"; /** 수정 **/ // window.location.href = "/schedules/new"; // 임시
     };
     const goGroupForm = () => {
       // TODO: 실제 그룹 생성 페이지 URL로 변경
