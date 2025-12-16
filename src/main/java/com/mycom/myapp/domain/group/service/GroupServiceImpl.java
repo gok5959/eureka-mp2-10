@@ -31,7 +31,7 @@ public class GroupServiceImpl implements GroupService {
     public GroupResponse createGroup(GroupCreateRequest request, Long ownerId) {
 
         User owner = userRepository.findById(ownerId)
-                .orElseThrow(() -> new UserNotFoundException("User Not Found in Group Creation : " + ownerId));
+                .orElseThrow(() -> new UserNotFoundException("그룹 생성 중 사용자(" + ownerId + ")를 찾을 수 없습니다."));
 
         Group group = Group.builder()
                 .name(request.getName())
@@ -56,13 +56,13 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public GroupResponse updateGroupByIdAndUserId(Long groupId, GroupUpdateRequest request, Long currentUserId) {
         User currentUser = userRepository.findById(currentUserId)
-                .orElseThrow(() -> new UserNotFoundException("User Not Found in Group Update : " + currentUserId));
+                .orElseThrow(() -> new UserNotFoundException("그룹 수정 중 사용자(" + currentUserId + ")를 찾을 수 없습니다."));
 
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new GroupNotFoundException("Group Not Found in Group Update : " + groupId));
+                .orElseThrow(() -> new GroupNotFoundException("수정할 그룹을 찾을 수 없습니다: " + groupId));
 
         if (!group.getOwner().getId().equals(currentUserId)) {
-            throw new GroupPermissionDeniedException("Current User " + currentUserId + " is not allowed to update this group : " + groupId);
+            throw new GroupPermissionDeniedException("사용자 " + currentUserId + "는 그룹 " + groupId + "을(를) 수정할 권한이 없습니다.");
         }
 
         group.update(request.getName(), request.getDescription());
@@ -74,10 +74,10 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public void deleteGroupByIdAndUserId(Long groupId, Long currentUserId) {
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new GroupNotFoundException("Group Not Found in Group deletion : " + groupId));
+                .orElseThrow(() -> new GroupNotFoundException("삭제할 그룹을 찾을 수 없습니다: " + groupId));
 
         if (!group.getOwner().getId().equals(currentUserId)) {
-            throw new GroupPermissionDeniedException("Current User " + currentUserId + " is not allowed to delete this group : " + groupId);
+            throw new GroupPermissionDeniedException("사용자 " + currentUserId + "는 그룹 " + groupId + "을(를) 삭제할 권한이 없습니다.");
         }
 
         groupMemberRepository.deleteByGroupId(groupId);
@@ -89,7 +89,7 @@ public class GroupServiceImpl implements GroupService {
     public GroupDetailResponse findGroupDetailById(Long groupId, Long currentUserId) {
 
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new GroupNotFoundException("Group Not Found : " + groupId));
+                .orElseThrow(() -> new GroupNotFoundException("그룹을 찾을 수 없습니다: " + groupId));
 
         long memberCount = groupMemberRepository.countByGroupId(groupId);
 
@@ -103,7 +103,7 @@ public class GroupServiceImpl implements GroupService {
             GroupMember membership = groupMemberRepository.findByGroupIdAndUserId(groupId, currentUserId)
                     .orElseThrow(() ->
                             new GroupPermissionDeniedException(
-                                    "User " + currentUserId + " is not a member of group " + groupId
+                                    "사용자 " + currentUserId + "는 그룹 " + groupId + "의 구성원이 아닙니다."
                             ));
 
             // 3. 멤버라면 그 멤버의 role 사용 (MEMBER, ADMIN 등 확장 가능)
