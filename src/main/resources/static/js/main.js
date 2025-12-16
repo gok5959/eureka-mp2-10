@@ -277,7 +277,7 @@
         e.stopPropagation();
         // 그룹 클릭 → 그룹 페이지로 이동
         // TODO: 실제 그룹 페이지 URL로 연결
-        window.location.href = `/groups/${g.id}`; // 예: /groups/{id} 상세 페이지
+        window.location.href = `/groups/${g.id}/calendar`; // 예: /groups/{id} 상세 페이지
       });
 
       left.appendChild(checkbox);

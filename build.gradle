@@ -52,6 +52,8 @@ dependencies {
     
     // 임시
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    
 }
 
 tasks.named('test') {

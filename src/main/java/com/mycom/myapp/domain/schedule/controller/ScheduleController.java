@@ -111,6 +111,7 @@ public class ScheduleController {
         dto.setGroupId(null);
 
         Long id = scheduleService.createSchedule(dto);
+        
         return ResponseEntity.ok(id);
     }
 
