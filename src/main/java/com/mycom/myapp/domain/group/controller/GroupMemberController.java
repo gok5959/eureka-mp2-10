@@ -33,6 +33,14 @@ public class GroupMemberController {
         return ResponseEntity.ok(groupMemberService.addGroupMember(groupId, userId));
     }
 
+    @PostMapping("/email")
+    public ResponseEntity<GroupMemberResponse> addGroupMemberByEmail(
+            @PathVariable Long groupId,
+            @RequestParam String email
+    ) {
+        return ResponseEntity.ok(groupMemberService.addGroupMemberByEmail(groupId, email));
+    }
+
     @DeleteMapping("/{targetUserId}")
     public ResponseEntity<Void> removeGroupMember(
             @PathVariable Long groupId,

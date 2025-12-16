@@ -14,4 +14,5 @@ public interface GroupMemberService {
     GroupMemberResponse addGroupMember(Long groupId, Long userId);
     // 멤버 제거(탈퇴)
     void deleteGroupMember(Long groupId, Long targetUserId, Long currentUserId);
+    GroupMemberResponse addGroupMemberByEmail(Long groupId, String email);
 }
