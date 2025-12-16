@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ScheduleCommentCreateRequest {
+public class ScheduleCommentCreateRequestDto {
 //    private Long scheduleId;
 //    private Long userId;
     private String content;

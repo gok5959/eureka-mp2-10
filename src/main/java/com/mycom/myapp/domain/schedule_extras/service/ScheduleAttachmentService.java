@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface ScheduleAttachmentService {
 
-    AttachmentResponseDto uploadAttachment(AttachmentRequestDto dto);
+    AttachmentResponseDto uploadAttachment(Long scheduleId, Long userId, AttachmentRequestDto dto);
 
     List<AttachmentResponseDto> getAttachments(Long scheduleId);
 
-    void deleteAttachment(Long id);
+    void deleteAttachment(Long id, Long userId);
 }

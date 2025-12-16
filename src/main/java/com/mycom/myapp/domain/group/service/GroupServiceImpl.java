@@ -39,17 +39,17 @@ public class GroupServiceImpl implements GroupService {
                 .owner(owner)
                 .build();
 
-        groupRepository.save(group);
+        Group saved = groupRepository.save(group);
 
         GroupMember groupMember = GroupMember.builder()
-                .group(group)
+                .group(saved)
                 .user(owner)
                 .role(GroupMemberRole.OWNER)
                 .build();
 
         groupMemberRepository.save(groupMember);
 
-        return GroupResponse.from(group);
+        return GroupResponse.from(saved);
     }
 
     @Override

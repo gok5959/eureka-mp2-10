@@ -5,7 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.mycom.myapp.domain.group.entity.Group;
+import com.mycom.myapp.domain.group.repository.GroupRepository;
 import com.mycom.myapp.domain.participation.entity.ParticipationStatus;
+import com.mycom.myapp.domain.participation.entity.ScheduleParticipation;
 import com.mycom.myapp.domain.participation.repository.ScheduleParticipationRepository;
 import com.mycom.myapp.domain.schedule.dto.ScheduleRequestDto;
 import com.mycom.myapp.domain.schedule.dto.ScheduleResponseDto;
@@ -13,6 +16,9 @@ import com.mycom.myapp.domain.schedule.entity.Schedule;
 import com.mycom.myapp.domain.schedule.entity.ScheduleStatus;
 import com.mycom.myapp.domain.schedule.repository.ScheduleRepository;
 import com.mycom.myapp.domain.schedule_extras.entity.ScheduleComment;
+import com.mycom.myapp.domain.schedule_extras.repository.ScheduleCommentRepository;
+import com.mycom.myapp.domain.user.entity.User;
+import com.mycom.myapp.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +29,9 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final ScheduleParticipationRepository participationRepository;
-    //private final ScheduleCommentRepository scheduleCommentRepository; // 🔹 댓글 레포지토리 추가
+    private final UserRepository userRepository;
+    private final GroupRepository groupRepository;
+    private final ScheduleCommentRepository scheduleCommentRepository;
 
     /**
      * 일정 생성
@@ -36,15 +44,32 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public Long createSchedule(ScheduleRequestDto dto) {
 
-        // 투표 기능 사용 여부에 따라 초기 상태 결정
+        // 1. owner 설정 (무조건 필요)
+        if (dto.getOwnerId() == null) {
+            throw new IllegalArgumentException("ownerId는 필수입니다.");
+        }
+
+        User owner = userRepository.findById(dto.getOwnerId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다. id=" + dto.getOwnerId()));
+
+        // 2. group 설정 (개인 일정이면 null, 그룹 일정이면 path에서 온 groupId)
+        Group group = null;
+        if (dto.getGroupId() != null) {
+            group = groupRepository.findById(dto.getGroupId())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 그룹이 없습니다. id=" + dto.getGroupId()));
+        }
+
+        // 3. 투표 기능 사용 여부에 따라 초기 상태 결정
         ScheduleStatus status = dto.isUserVoting()
                 ? ScheduleStatus.VOTING
                 : ScheduleStatus.CONFIRMED;
 
+        // 4. 일정 엔티티 생성 (아직 save 안 함)
         Schedule schedule = Schedule.builder()
                 .title(dto.getTitle())
                 .description(dto.getDescription())
-                // TODO: owner, group 세팅은 나중에 Security/Group 연관관계 붙이면서 처리
+                .owner(owner)
+                .group(group)
                 .startAt(dto.getStartAt())
                 .endAt(dto.getEndAt())
                 .placeName(dto.getPlaceName())
@@ -53,9 +78,44 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .minParticipants(dto.isUserVoting() ? dto.getMinParticipants() : null)
                 .build();
 
+        // 🔹 5. owner를 자동 참여자로 넣고 싶으면 (선택)
+        ScheduleParticipation ownerParticipation = ScheduleParticipation.builder()
+                .schedule(schedule)
+                .user(owner)
+                .status(ParticipationStatus.ACCEPTED)
+                .build();
+        schedule.addParticipation(ownerParticipation);
+
+        // 🔹 6. DTO에 넘어온 참가자들도 참여자로 추가
+        if (dto.getParticipantUsersIds() != null && !dto.getParticipantUsersIds().isEmpty()) {
+            for (Long participantUserId : dto.getParticipantUsersIds()) {
+
+                // ownerId가 participantUsersIds에 들어있을 수도 있으니 한 번 걸러줌
+                if (participantUserId.equals(dto.getOwnerId())) {
+                    continue;
+                }
+
+                User participant = userRepository.findById(participantUserId)
+                        .orElseThrow(() -> new IllegalArgumentException("참여 유저가 없습니다. id=" + participantUserId));
+
+                ScheduleParticipation participation = ScheduleParticipation.builder()
+                        .schedule(schedule)
+                        .user(participant)
+                        .status(ParticipationStatus.ACCEPTED)
+                        .build();
+
+                // 양방향 연관관계 세팅
+                schedule.addParticipation(participation);
+            }
+        }
+
+        // 🔹 7. schedule 하나만 save 해도
+        //    participations는 CascadeType.ALL 덕분에 같이 INSERT 됨
         Schedule saved = scheduleRepository.save(schedule);
+
         return saved.getId();
     }
+
 
     /**
      * 전체 일정 목록 조회
@@ -104,17 +164,13 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     @Transactional(readOnly = true)
     public ScheduleResponseDto getScheduleDetail(Long id) {
-//        // 1) 일정 엔티티 조회
-//        Schedule schedule = scheduleRepository.findById(id)
-//                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 없습니다. id=" + id));
-//
-//        // 2) 이 일정에 달린 댓글 목록 조회
-//        List<ScheduleComment> comments =
-//                scheduleCommentRepository.findBySchedule_IdOrderByCreatedAtAsc(id);
-//
-//        // 3) 댓글 + 첨부까지 포함한 상세 DTO로 변환
-//        return ScheduleResponseDto.fromEntityWithDetails(schedule, comments);
-    	return null;
+        Schedule schedule = scheduleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 없습니다. id=" + id));
+
+        // 🔥 댓글도 같이 조회
+        List<ScheduleComment> comments = scheduleCommentRepository.findBySchedule_IdOrderByCreatedAtAsc(id);
+
+        return ScheduleResponseDto.fromEntityWithDetails(schedule, comments);
     }
 
     /**
@@ -146,9 +202,49 @@ public class ScheduleServiceImpl implements ScheduleService {
             schedule.setMinParticipants(null);
         }
 
-        // 변경 감지로 자동 update 되므로 save() 안 해도 됨
+        // 🔹 참여자 리스트가 들어왔으면 → 참여자 전체를 DTO 기준으로 재세팅
+        if (dto.getParticipantUsersIds() != null) {
+        	
+            if (schedule.isVoting()) {
+                throw new IllegalStateException("투표 중인 일정은 참여자를 수정할 수 없습니다.");
+            }
+
+            // 1) 기존 참여자 전부 삭제 (orphanRemoval = true 이므로 DB에서 delete)
+            for (ScheduleParticipation p : new java.util.ArrayList<>(schedule.getParticipations())) {
+                schedule.removeParticipation(p);
+            }
+
+            // 2) owner 다시 참여자로 등록 (원하면 유지)
+            User owner = schedule.getOwner();
+            ScheduleParticipation ownerParticipation = ScheduleParticipation.builder()
+                    .user(owner)
+                    .status(ParticipationStatus.ACCEPTED)
+                    .build();
+            schedule.addParticipation(ownerParticipation);
+
+            // 3) DTO로 온 참여자들 다시 추가
+            for (Long participantUserId : dto.getParticipantUsersIds()) {
+
+                if (participantUserId.equals(owner.getId())) {
+                    continue;
+                }
+
+                User participant = userRepository.findById(participantUserId)
+                        .orElseThrow(() -> new IllegalArgumentException("참여 유저가 없습니다. id=" + participantUserId));
+
+                ScheduleParticipation participation = ScheduleParticipation.builder()
+                        .user(participant)
+                        .status(ParticipationStatus.ACCEPTED)
+                        .build();
+
+                schedule.addParticipation(participation);
+            }
+        }
+
+        // 변경감지로 자동 update
         return schedule.getId();
     }
+
 
     /**
      * 일정 삭제
