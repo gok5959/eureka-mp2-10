@@ -54,7 +54,59 @@
       <div class="alert mt-4 d-none" id="groupDetailResult"></div>
 
       <hr class="my-4">
-      <div class="d-flex gap-2">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0">멤버 목록</h5>
+        <button class="btn btn-sm btn-outline-secondary" id="btnReloadMembers">멤버 새로고침</button>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm table-hover">
+          <thead>
+          <tr>
+            <th scope="col">유저 ID</th>
+            <th scope="col">이름</th>
+            <th scope="col">이메일</th>
+            <th scope="col">역할</th>
+            <th scope="col">관리</th>
+          </tr>
+          </thead>
+          <tbody id="memberListBody">
+          <tr>
+            <td colspan="5" class="text-center text-muted">멤버 정보를 불러오는 중입니다.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <hr class="my-4">
+      <div class="card shadow-sm mt-4 d-none" id="ownerActions">
+        <div class="card-body">
+          <h5 class="mb-3">멤버 관리</h5>
+          <form id="addMemberForm" class="row g-3 align-items-end">
+            <div class="col-md-8">
+              <label for="addMemberUserId" class="form-label">추가할 사용자 ID</label>
+              <input type="number" class="form-control" id="addMemberUserId" placeholder="사용자 ID" min="1">
+            </div>
+            <div class="col-md-4">
+              <button type="submit" class="btn btn-primary w-100">추가</button>
+            </div>
+          </form>
+          <div class="alert mt-3 d-none" id="addMemberResult"></div>
+          <hr class="my-3">
+          <form id="addMemberEmailForm" class="row g-3 align-items-end">
+            <div class="col-md-8">
+              <label for="addMemberEmail" class="form-label">추가할 사용자 이메일</label>
+              <input type="email" class="form-control" id="addMemberEmail" placeholder="user@example.com">
+            </div>
+            <div class="col-md-4">
+              <button type="submit" class="btn btn-outline-primary w-100">이메일로 추가</button>
+            </div>
+          </form>
+          <div class="alert mt-3 d-none" id="addMemberEmailResult"></div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 mt-4">
+        <a href="/testmain" class="btn btn-outline-secondary flex-fill">메인으로</a>
         <a href="#" id="detailEditLink" class="btn btn-primary flex-fill">수정 페이지 이동</a>
         <a href="/groups/page/new" class="btn btn-outline-secondary flex-fill">새 그룹 만들기</a>
       </div>

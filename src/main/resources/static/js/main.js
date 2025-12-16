@@ -332,7 +332,7 @@
     };
     const goGroupForm = () => {
       // TODO: 실제 그룹 생성 페이지 URL로 변경
-      window.location.href = "/groups/new"; // 임시
+      window.location.href = "/groups/page/new"; // 임시
     };
 
     ["btn-header-add-schedule", "btn-side-add-schedule"].forEach((id) => {
