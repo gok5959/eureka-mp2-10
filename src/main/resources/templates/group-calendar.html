@@ -161,7 +161,7 @@
 <body>
 
 <header class="app-header">
-  <div class="container-fluid py-3 d-flex justify-content-between align-items-center">
+  <div class="container-fluid py-3 px-4 px-lg-5 d-flex justify-content-between align-items-center">
     <div class="d-flex flex-column gap-1">
       <div class="brand-pill">
         <span class="dot"></span>
@@ -174,11 +174,14 @@
     </div>
 
     <div class="d-flex gap-2">
-	  <a href="/testmain" class="btn btn-outline-secondary btn-sm px-3">
+	  <a href="/main" class="btn btn-outline-secondary btn-sm px-3">
 	    ← 홈
 	  </a>
 	  <button id="btn-header-add-schedule" class="btn btn-primary btn-sm px-3">
 	    + 일정 추가
+	  </button>
+	  <button id="btn-edit-group" class="btn btn-primary btn-sm px-3 d-none">
+	    그룹 정보 수정
 	  </button>
 	</div>
 
@@ -211,7 +214,10 @@
               <div class="section-title">그룹 멤버</div>
             </div>
             <button id="btn-side-add-group-member"
-			        class="btn btn-outline-primary btn-sm px-3 d-none">
+			        type="button"
+			        class="btn btn-outline-primary btn-sm px-3 d-none"
+			        data-bs-toggle="modal"
+			        data-bs-target="#inviteMemberModal">
 			  + 초대
 			</button>
           </div>
@@ -246,6 +252,33 @@
     <div class="fw-bold">불러오는 중...</div>
   </div>
 </div>
+
+<div class="modal fade" id="inviteMemberModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4">
+      <div class="modal-header">
+        <h5 class="modal-title">멤버 초대 (이메일)</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+      </div>
+
+      <form id="inviteMemberForm">
+        <div class="modal-body">
+          <div id="inviteResult" class="alert d-none mb-3"></div>
+
+          <label for="inviteEmail" class="form-label fw-bold">이메일</label>
+          <input id="inviteEmail" type="email" class="form-control" placeholder="example@domain.com" required />
+          <div class="form-text">가입시키려는 사용자의 이메일을 입력하세요.</div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+          <button type="submit" class="btn btn-primary">초대</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 
 
 </body>

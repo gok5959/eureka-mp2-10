@@ -358,6 +358,9 @@
       // TODO: 실제 그룹 생성 페이지 URL로 변경
       window.location.href = "/groups/page/new"; // 임시
     };
+    const goGroupList = () => {
+		window.location.href = "/groups/page/list"
+	}
 
     ["btn-header-add-schedule", "btn-side-add-schedule"].forEach((id) => {
       $(id)?.addEventListener("click", goScheduleForm);
@@ -366,6 +369,10 @@
     ["btn-header-add-group", "btn-side-add-group"].forEach((id) => {
       $(id)?.addEventListener("click", goGroupForm);
     });
+    
+    ["btn-side-reg-group"].forEach((id) => {
+	  $(id)?.addEventListener("click", goGroupList);
+	});
 
     $("btnCheckAllGroups")?.addEventListener("click", () => {
       state.groups.forEach((g) => (g.checked = true));

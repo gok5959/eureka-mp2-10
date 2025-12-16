@@ -30,7 +30,7 @@ public class WebPageController {
     }
 
     @GetMapping("/groups/page/{groupId}/edit")
-    public String editGroupPage(@PathVariable Long groupId) {
+    public String editGroupPage(@PathVariable("groupId") Long groupId) {
         return "forward:/pages/group-edit.html";
     }
 
