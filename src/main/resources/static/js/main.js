@@ -350,8 +350,14 @@
   // 버튼 바인딩
   // =========================
   function bindButtons() {
-    const goScheduleForm = () => window.location.href = "/schedules/new";
-    const goGroupForm = () => window.location.href = "/groups/page/new";
+    const goScheduleForm = () => {
+      // TODO: 실제 일정 생성 페이지 URL로 변경
+      window.location.href = "/schedules/new"; // 임시
+    };
+    const goGroupForm = () => {
+      // TODO: 실제 그룹 생성 페이지 URL로 변경
+      window.location.href = "/groups/page/new"; // 임시
+    };
 
     ["btn-header-add-schedule", "btn-side-add-schedule"].forEach((id) => {
       $(id)?.addEventListener("click", goScheduleForm);

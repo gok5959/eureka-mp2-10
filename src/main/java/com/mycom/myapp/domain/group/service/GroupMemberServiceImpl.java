@@ -106,6 +106,31 @@ public class GroupMemberServiceImpl implements GroupMemberService {
         groupMemberRepository.deleteByGroupIdAndUserId(groupId, targetUserId);
     }
 
+    @Override
+    @Transactional
+    public GroupMemberResponse addGroupMemberByEmail(Long groupId, String email) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new GroupNotFoundException("그룹을 찾을 수 없습니다: " + groupId));
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: " + email));
+
+        // 중복 체크 로직
+        boolean exists = groupMemberRepository.existsByGroupIdAndUserId(groupId, user.getId());
+        if (exists) {
+            throw new GroupMemberAddDuplicateException("이미 그룹에 가입된 사용자입니다. groupId=" + groupId + ", userId=" + user.getId());
+        }
+
+        GroupMember groupMember = GroupMember.builder()
+                .user(user)
+                .group(group)
+                .role(GroupMemberRole.MEMBER)
+                .build();
+
+        GroupMember saved = groupMemberRepository.save(groupMember);
+
+        return GroupMemberResponse.from(saved);
+    }
 
 
 }

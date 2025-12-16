@@ -19,6 +19,11 @@ public class WebPageController {
         return "forward:/pages/signup.html";
     }
 
+    @GetMapping("/groups/page/list")
+    public String groupListPage() {
+        return "forward:/pages/group-list.html";
+    }
+
     @GetMapping("/groups/page/new")
     public String createGroupPage() {
         return "forward:/pages/group-create.html";
