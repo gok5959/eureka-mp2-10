@@ -3,16 +3,15 @@ package com.mycom.myapp.domain.schedule.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mycom.myapp.domain.CurrentUser;
 import com.mycom.myapp.domain.schedule.dto.ScheduleRequestDto;
 import com.mycom.myapp.domain.schedule.dto.ScheduleResponseDto;
 import com.mycom.myapp.domain.schedule.service.ScheduleService;
@@ -119,21 +118,12 @@ public class ScheduleController {
      * 개인 일정 목록 조회
      * GET /personal-schedules
      */
-//    @GetMapping("/personal-schedules")
-//    public ResponseEntity<List<ScheduleResponseDto>> getPersonalScheduleList() {
-//        // TODO: 현재 로그인 유저 기준으로 필터링 (ownerId)
-//        List<ScheduleResponseDto> list = scheduleService.getScheduleList();
-//        return ResponseEntity.ok(list);
-//    }
-    
-
-//	@GetMapping("/personal-schedules")
-	public ResponseEntity<List<ScheduleResponseDto>> getPersonalScheduleList(Authentication auth) {
-	    Long userId = CurrentUser.idOrDev(auth, 1L); // ✅ 무조건 1번으로 테스트 가능
-	    System.out.println("userId = " + userId);
-	
-	    return ResponseEntity.ok(scheduleService.getScheduleList());
-	}
+    @GetMapping("/personal-schedules")
+    public ResponseEntity<List<ScheduleResponseDto>> getPersonalScheduleList(
+        @RequestParam("ownerId") Long ownerId
+    ) {
+      return ResponseEntity.ok(scheduleService.getPersonalScheduleList(ownerId));
+    }
 
     /**
      * 개인 일정 상세 조회
