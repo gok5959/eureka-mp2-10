@@ -1,4 +1,4 @@
-package com.mycom.myapp.domain.auth.controller;
+	package com.mycom.myapp.domain.auth.controller;
 
 import com.mycom.myapp.domain.auth.dto.LoginRequest;
 import com.mycom.myapp.domain.auth.dto.LoginResponse;

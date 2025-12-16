@@ -28,8 +28,8 @@ public class GroupController {
     // 그룹 수정
     @PutMapping("/{groupId}")
     public ResponseEntity<GroupResponse> updateGroup(
-            @PathVariable Long groupId,
-            @RequestParam Long currentUserId,
+            @PathVariable("groupId") Long groupId,
+            @RequestParam("currentUserId") Long currentUserId,
             @RequestBody @Valid GroupUpdateRequest request
     ) {
         GroupResponse response =

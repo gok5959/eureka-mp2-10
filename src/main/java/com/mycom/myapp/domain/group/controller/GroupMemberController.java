@@ -27,16 +27,16 @@ public class GroupMemberController {
 
     @PostMapping
     public ResponseEntity<GroupMemberResponse> addGroupMember(
-            @PathVariable Long groupId,
-            @RequestParam Long userId
+            @PathVariable("groupId") Long groupId,
+            @RequestParam("userId") Long userId
     ) {
         return ResponseEntity.ok(groupMemberService.addGroupMember(groupId, userId));
     }
 
     @PostMapping("/email")
     public ResponseEntity<GroupMemberResponse> addGroupMemberByEmail(
-            @PathVariable Long groupId,
-            @RequestParam String email
+            @PathVariable("groupId") Long groupId,
+            @RequestParam("email") String email
     ) {
         return ResponseEntity.ok(groupMemberService.addGroupMemberByEmail(groupId, email));
     }
