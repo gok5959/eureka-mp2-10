@@ -57,16 +57,17 @@ public class GroupController {
     // 그룹 상세 조회
     @GetMapping("/{groupId}")
     public ResponseEntity<GroupDetailResponse> getGroupDetail(
-            @PathVariable Long groupId,
-            @RequestParam Long currentUserId
+    		@PathVariable("groupId") Long groupId,
+            @RequestParam("currentUserId") Long currentUserId
     ) {
         GroupDetailResponse result = groupService.findGroupDetailById(groupId, currentUserId);
         return ResponseEntity.ok(result);
     }
+    
     // 사용자별 그룹 리스트 조회
     @GetMapping("/users")
     public ResponseEntity<Page<GroupListResponse>> getUserGroups(
-            @RequestParam Long currentUserId,
+            @RequestParam("currentUserId") Long currentUserId,
             @ModelAttribute GroupSearchCondition condition,
             Pageable pageable
     ) {

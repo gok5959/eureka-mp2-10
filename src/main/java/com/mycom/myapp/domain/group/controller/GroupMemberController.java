@@ -18,7 +18,7 @@ public class GroupMemberController {
 
     @GetMapping
     public ResponseEntity<Page<GroupMemberResponse>> searchGroupMember(
-            @PathVariable Long groupId,
+            @PathVariable("groupId") Long groupId,
             @ModelAttribute GroupMemberSearchCondition condition,
             Pageable pageable
     ) {

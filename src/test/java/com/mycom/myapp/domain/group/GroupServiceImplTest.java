@@ -1,16 +1,16 @@
-package com.mycom.myapp.domain.group.service;
+package com.mycom.myapp.domain.group;
 
-import com.mycom.myapp.domain.group.GroupMemberRole;
-import com.mycom.myapp.domain.group.dto.*;
-import com.mycom.myapp.domain.group.entity.Group;
-import com.mycom.myapp.domain.group.entity.GroupMember;
-import com.mycom.myapp.domain.group.exception.GroupNotFoundException;
-import com.mycom.myapp.domain.group.exception.GroupPermissionDeniedException;
-import com.mycom.myapp.domain.group.repository.GroupMemberRepository;
-import com.mycom.myapp.domain.group.repository.GroupRepository;
-import com.mycom.myapp.domain.user.entity.User;
-import com.mycom.myapp.domain.user.exception.UserNotFoundException;
-import com.mycom.myapp.domain.user.repository.UserRepository;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,13 +18,27 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
+import com.mycom.myapp.domain.group.dto.GroupCreateRequest;
+import com.mycom.myapp.domain.group.dto.GroupDetailResponse;
+import com.mycom.myapp.domain.group.dto.GroupListResponse;
+import com.mycom.myapp.domain.group.dto.GroupResponse;
+import com.mycom.myapp.domain.group.dto.GroupSearchCondition;
+import com.mycom.myapp.domain.group.dto.GroupUpdateRequest;
+import com.mycom.myapp.domain.group.entity.Group;
+import com.mycom.myapp.domain.group.entity.GroupMember;
+import com.mycom.myapp.domain.group.exception.GroupNotFoundException;
+import com.mycom.myapp.domain.group.exception.GroupPermissionDeniedException;
+import com.mycom.myapp.domain.group.repository.GroupMemberRepository;
+import com.mycom.myapp.domain.group.repository.GroupRepository;
+import com.mycom.myapp.domain.group.service.GroupServiceImpl;
+import com.mycom.myapp.domain.user.entity.User;
+import com.mycom.myapp.domain.user.exception.UserNotFoundException;
+import com.mycom.myapp.domain.user.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class GroupServiceImplTest {
