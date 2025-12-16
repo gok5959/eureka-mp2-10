@@ -56,7 +56,7 @@
       localStorage.setItem("accessToken", data.accessToken ?? "");
       authHelper?.setCurrentUser?.(data.user || null);
       showResult("success", `${data.user?.name ?? "사용자"}님 환영합니다!`);
-      window.location.href = '/testmain'
+      window.location.href = '/main'
     } catch (err) {
       showResult("error", err.message || "로그인에 실패했습니다.");
     }

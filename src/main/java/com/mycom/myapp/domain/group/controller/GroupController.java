@@ -19,7 +19,7 @@ public class GroupController {
     // 그룹 생성
     @PostMapping
     public ResponseEntity<GroupResponse> createGroup(
-            @RequestParam Long currentUserId,
+            @RequestParam("currentUserId")Long currentUserId,
             @RequestBody @Valid GroupCreateRequest request
     ) {
         GroupResponse response = groupService.createGroup(request, currentUserId);
