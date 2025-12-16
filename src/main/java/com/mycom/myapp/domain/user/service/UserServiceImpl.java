@@ -5,6 +5,7 @@ import com.mycom.myapp.domain.user.dto.UserSearchCondition;
 import com.mycom.myapp.domain.user.dto.UserSignupRequest;
 import com.mycom.myapp.domain.user.entity.User;
 import com.mycom.myapp.domain.user.exception.DuplicatedEmailException;
+import com.mycom.myapp.domain.user.exception.SignupValidationException;
 import com.mycom.myapp.domain.user.exception.UserNotFoundException;
 import com.mycom.myapp.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,11 @@ public class UserServiceImpl implements UserService {
     public UserResponse insertUser(UserSignupRequest userSignupRequest) {
         boolean userExists = userRepository.existsByEmail(userSignupRequest.getEmail());
         if(userExists) {
-            throw new DuplicatedEmailException("Duplicate email address : " + userSignupRequest.getEmail());
+            throw new DuplicatedEmailException("이미 사용 중인 이메일입니다: " + userSignupRequest.getEmail());
+        }
+
+        if (userSignupRequest.getRole() == null) {
+            throw new SignupValidationException("역할을 선택해 주세요.");
         }
 
         return UserResponse.from(userRepository.save(User.builder()
@@ -40,14 +45,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse findUserById(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User Not Found : " + userId));
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: " + userId));
         return UserResponse.from(user);
     }
 
     @Override
     public UserResponse findUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User Not Found : " + email));
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: " + email));
         return UserResponse.from(user);
     }
 

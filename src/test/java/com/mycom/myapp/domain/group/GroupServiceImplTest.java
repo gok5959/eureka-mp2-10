@@ -99,7 +99,7 @@ class GroupServiceImplTest {
         // when & then
         assertThatThrownBy(() -> groupService.createGroup(request, ownerId))
                 .isInstanceOf(UserNotFoundException.class)
-                .hasMessageContaining("User Not Found in Group Creation");
+                .hasMessageContaining("그룹 생성 중 사용자");
     }
 
     @Test

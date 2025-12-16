@@ -38,7 +38,7 @@ public class GroupMemberServiceImpl implements GroupMemberService {
     ) {
         boolean exists = groupRepository.existsById(groupId);
         if(!exists) {
-            throw new GroupNotFoundException("Group Not Found : " + groupId);
+            throw new GroupNotFoundException("그룹을 찾을 수 없습니다: " + groupId);
         }
 
         String keyword = (searchCondition != null) ? searchCondition.getKeyword() : null;
@@ -54,15 +54,15 @@ public class GroupMemberServiceImpl implements GroupMemberService {
     public GroupMemberResponse addGroupMember(Long groupId, Long userId) {
 
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new GroupNotFoundException("Group Not Found : " + groupId));
+                .orElseThrow(() -> new GroupNotFoundException("그룹을 찾을 수 없습니다: " + groupId));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User Not Found : " + userId));
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: " + userId));
 
         // 중복 체크 로직
         boolean exists = groupMemberRepository.existsByGroupIdAndUserId(groupId, userId);
         if (exists) {
-            throw new GroupMemberAddDuplicateException("User already joined this group. groupId=" + groupId + ", userId=" + userId);
+            throw new GroupMemberAddDuplicateException("이미 그룹에 가입된 사용자입니다. groupId=" + groupId + ", userId=" + userId);
         }
 
         GroupMember groupMember = GroupMember.builder()
@@ -82,13 +82,13 @@ public class GroupMemberServiceImpl implements GroupMemberService {
     public void deleteGroupMember(Long groupId, Long targetUserId, Long currentUserId) {
 
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new GroupNotFoundException("Group Not Found : " + groupId));
+                .orElseThrow(() -> new GroupNotFoundException("그룹을 찾을 수 없습니다: " + groupId));
 
         // 삭제할 멤버 존재 확인
         boolean exists = groupMemberRepository.existsByGroupIdAndUserId(groupId, targetUserId);
         if (!exists) {
             throw new GroupMemberNotFoundException(
-                    "GroupMember Not Found. groupId=" + groupId + ", userId=" + targetUserId
+                    "그룹 구성원을 찾을 수 없습니다. groupId=" + groupId + ", userId=" + targetUserId
             );
         }
 
@@ -98,7 +98,7 @@ public class GroupMemberServiceImpl implements GroupMemberService {
             // 추방이면 권한 체크: OWNER만 가능
             if (!group.getOwner().getId().equals(currentUserId)) {
                 throw new GroupPermissionDeniedException(
-                        "User " + currentUserId + " is not allowed to remove member " + targetUserId
+                        "사용자 " + currentUserId + "는 구성원 " + targetUserId + "을(를) 제거할 권한이 없습니다."
                 );
             }
         }

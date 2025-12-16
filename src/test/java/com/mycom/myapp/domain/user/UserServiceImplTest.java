@@ -98,7 +98,7 @@ class UserServiceImplTest {
         // when & then
         assertThatThrownBy(() -> userService.insertUser(request))
                 .isInstanceOf(DuplicatedEmailException.class)
-                .hasMessageContaining("Duplicate email address");
+                .hasMessageContaining("이미 사용 중인 이메일입니다");
     }
 
     @Test
@@ -132,7 +132,7 @@ class UserServiceImplTest {
         // when & then
         assertThatThrownBy(() -> userService.findUserById(1L))
                 .isInstanceOf(UserNotFoundException.class)
-                .hasMessageContaining("User Not Found");
+                .hasMessageContaining("사용자를 찾을 수 없습니다");
     }
 
     @Test
@@ -168,7 +168,7 @@ class UserServiceImplTest {
         // when & then
         assertThatThrownBy(() -> userService.findUserByEmail("test@test.com"))
                 .isInstanceOf(UserNotFoundException.class)
-                .hasMessageContaining("User Not Found");
+                .hasMessageContaining("사용자를 찾을 수 없습니다");
     }
 
     @Test
