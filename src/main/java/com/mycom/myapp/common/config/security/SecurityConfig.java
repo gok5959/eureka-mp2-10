@@ -97,7 +97,7 @@ public class SecurityConfig {
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/js/**", "/pages/**", "/templates/**", "/.well-known/**").permitAll()
-                        .requestMatchers("/auth/**", "/testmain", "/testmain/**", "/signup", "/login").permitAll()
+                        .requestMatchers("/auth/**", "/main", "/main/**", "/signup", "/login").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/users").permitAll()
                         .anyRequest().authenticated()
                 )
