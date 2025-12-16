@@ -46,12 +46,10 @@ dependencies {
 
     // validation
     implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
-    
-    //swagger
+
+    // swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14'
-    
-    // 임시
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+
 }
 
 tasks.named('test') {

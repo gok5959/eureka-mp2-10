@@ -1,6 +1,6 @@
 package com.mycom.myapp.domain.schedule_extras.controller;
 
-import com.mycom.myapp.domain.schedule_extras.dto.ScheduleCommentCreateRequest;
+import com.mycom.myapp.domain.schedule_extras.dto.ScheduleCommentCreateRequestDto;
 import com.mycom.myapp.domain.schedule_extras.dto.ScheduleCommentResponse;
 import com.mycom.myapp.domain.schedule_extras.dto.ScheduleCommentUpdateRequest;
 import com.mycom.myapp.domain.schedule_extras.service.ScheduleCommentService;
@@ -23,7 +23,7 @@ public class ScheduleCommentController {
     public ResponseEntity<ScheduleCommentResponse> createComment(
             @PathVariable Long scheduleId,
             @RequestParam Long userId,
-            @RequestBody ScheduleCommentCreateRequest request
+            @RequestBody ScheduleCommentCreateRequestDto request
     ) {
         ScheduleCommentResponse response =
                 commentService.createComment(scheduleId, userId, request.getContent());

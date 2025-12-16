@@ -20,7 +20,7 @@ public class ScheduleRequestDto {
     private String description;
     // Security 붙이면 현재 로그인 유저가 자동으로 붙는다 생각하지만
     // 혹시 몰라서 두겠습니다.
-    // private Long ownerId;
+    private Long ownerId;
     private Long groupId;
     private LocalDateTime startAt;
     private LocalDateTime endAt;
