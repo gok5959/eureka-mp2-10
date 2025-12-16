@@ -57,6 +57,7 @@ public class LoginServiceImpl implements LoginService {
 
         return LoginResponse.builder()
                 .accessToken(access)
+                .refreshToken(refresh)
                 .user(UserResponse.from(user))
                 .build();
     }

@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 public class LoginResponse {
     private String accessToken;
     // TODO 일정 가능하면 refreshToken 구현
-//    private String refreshToken;
+    private String refreshToken;
     private UserResponse user;
 }
