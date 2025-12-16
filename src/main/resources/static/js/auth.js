@@ -53,6 +53,14 @@
       },
     };
 
+    if (
+        opts.body &&
+        !(opts.body instanceof FormData) &&
+        !opts.headers["Content-Type"]
+    ) {
+      opts.headers["Content-Type"] = "application/json";
+    }
+
     const applyToken = (token) => {
       if (token) {
         opts.headers.Authorization = `Bearer ${token}`;

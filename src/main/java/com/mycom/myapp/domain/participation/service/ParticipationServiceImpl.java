@@ -85,12 +85,11 @@ public class ParticipationServiceImpl implements ParticipationService {
     @Override
     @Transactional(readOnly = true)
     public ParticipationStatusResponseDto getMyParticipation(Long userId, Long scheduleId) {
-        ScheduleParticipation participation = participationRepository
-                .findByScheduleIdAndUserId(scheduleId, userId)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "참여 정보가 없습니다. scheduleId=" + scheduleId + ", userId=" + userId));
 
-        return ParticipationStatusResponseDto.fromEntity(participation);
+        return participationRepository
+                .findByScheduleIdAndUserId(scheduleId, userId)
+                .map(ParticipationStatusResponseDto::fromEntity)
+                .orElse(null); // ✅ 참여 안 했으면 null 반환
     }
 
     /**
