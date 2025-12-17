@@ -55,7 +55,8 @@ public class ScheduleController {
             @PathVariable("groupId") Long groupId
     ) {
         // TODO: groupId 기준으로 필터링하는 메서드로 변경 (예: scheduleService.getGroupSchedules(groupId))
-        List<ScheduleResponseDto> list = scheduleService.getScheduleList();
+//        List<ScheduleResponseDto> list = scheduleService.getScheduleList();
+        List<ScheduleResponseDto> list = scheduleService.getGroupScheduleList(groupId);
         return ResponseEntity.ok(list);
     }
 
