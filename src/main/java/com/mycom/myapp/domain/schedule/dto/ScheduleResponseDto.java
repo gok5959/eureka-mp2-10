@@ -29,6 +29,7 @@ public class ScheduleResponseDto {
     private String description;
 
     private Long ownerId;
+    private String ownerName; // 추가
     private Long groupId;
 
     private LocalDateTime startAt;
@@ -69,15 +70,7 @@ public class ScheduleResponseDto {
             List<ScheduleComment> comments
     ) {
         List<ScheduleCommentResponse> commentDtos = comments.stream()
-                .map(c -> ScheduleCommentResponse.builder()
-                        .id(c.getId())
-                        .scheduleId(c.getSchedule().getId())
-                        .userId(c.getUser().getId())
-                        .content(c.getContent())
-                        .createdAt(c.getCreatedAt())
-                        .updatedAt(c.getUpdatedAt())
-                        .build()
-                )
+                .map(ScheduleCommentResponse::fromEntity)
                 .collect(Collectors.toList());
 
         List<AttachmentResponseDto> attachmentDtos = schedule.getAttachments().stream()
@@ -103,6 +96,7 @@ public class ScheduleResponseDto {
                 .title(schedule.getTitle())
                 .description(schedule.getDescription())
                 .ownerId(schedule.getOwner() != null ? schedule.getOwner().getId() : null)
+                .ownerName(schedule.getOwner() != null ? schedule.getOwner().getName() : null)
                 .groupId(schedule.getGroup() != null ? schedule.getGroup().getId() : null)
                 .startAt(schedule.getStartAt())
                 .endAt(schedule.getEndAt())
