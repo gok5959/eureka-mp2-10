@@ -162,10 +162,19 @@ public class ScheduleServiceImpl implements ScheduleService {
      * - DTO의 fromEntityWithDetails(...) 를 사용해 댓글+첨부 포함한 상세 DTO로 변환
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public ScheduleResponseDto getScheduleDetail(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 일정이 없습니다. id=" + id));
+
+        // 🔥 투표 상태 핵심 로직 시작
+        if (schedule.isVoting()
+                && schedule.getVoteDeadlineAt() != null
+                && schedule.getVoteDeadlineAt().isBefore(java.time.LocalDateTime.now())) {
+
+            closeVoting(schedule.getId());
+        }
+        // 🔥 핵심 로직 끝
 
         // 🔥 댓글도 같이 조회
         List<ScheduleComment> comments = scheduleCommentRepository.findBySchedule_IdOrderByCreatedAtAsc(id);
