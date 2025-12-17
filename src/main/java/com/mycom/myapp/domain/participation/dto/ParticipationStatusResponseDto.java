@@ -18,6 +18,7 @@ public class ParticipationStatusResponseDto {
 
     private Long scheduleId;
     private Long userId;
+    private String userName;
     private ParticipationStatus status;
 
     private LocalDateTime createdAt;
@@ -27,6 +28,7 @@ public class ParticipationStatusResponseDto {
         return ParticipationStatusResponseDto.builder()
                 .scheduleId(participation.getSchedule().getId())
                 .userId(participation.getUser().getId())
+                .userName(participation.getUser().getName())
                 .status(participation.getStatus())
                 .createdAt(participation.getCreatedAt())
                 .updatedAt(participation.getUpdatedAt())

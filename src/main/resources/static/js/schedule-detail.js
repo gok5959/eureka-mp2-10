@@ -286,7 +286,7 @@ async function loadParticipants(scheduleId) {
         const li = document.createElement("li");
         li.className = "list-group-item d-flex justify-content-between";
         li.innerHTML = `
-          <span>사용자 ${p.userId}</span>
+          <span>${p.userName}</span>
           <span class="badge bg-primary">${p.status}</span>
         `;
         ul.appendChild(li);
