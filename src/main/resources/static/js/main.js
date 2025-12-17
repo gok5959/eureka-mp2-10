@@ -5,7 +5,11 @@
   const $ = (id) => document.getElementById(id);
 
   function safeJsonParse(s) {
-    try { return JSON.parse(s); } catch { return null; }
+    try {
+      return JSON.parse(s);
+    } catch {
+      return null;
+    }
   }
 
   // localStorage -> meta -> fallback
@@ -17,8 +21,12 @@
     const idFromLs = localStorage.getItem("currentUserId");
     const nameFromLs = localStorage.getItem("currentUserName");
 
-    const idFromMeta = document.querySelector('meta[name="current-user-id"]')?.getAttribute("content");
-    const nameFromMeta = document.querySelector('meta[name="current-user-name"]')?.getAttribute("content");
+    const idFromMeta = document
+      .querySelector('meta[name="current-user-id"]')
+      ?.getAttribute("content");
+    const nameFromMeta = document
+      .querySelector('meta[name="current-user-name"]')
+      ?.getAttribute("content");
 
     const id = Number(idFromUser ?? idFromLs ?? idFromMeta ?? 1) || 1;
     const name = String(nameFromUser ?? nameFromLs ?? nameFromMeta ?? "사용자 1");
@@ -32,17 +40,19 @@
   $("currentUserNameText") && ($("currentUserNameText").textContent = CURRENT_USER_NAME);
 
   // meta 동기화
-  document.querySelector('meta[name="current-user-id"]')
+  document
+    .querySelector('meta[name="current-user-id"]')
     ?.setAttribute("content", String(CURRENT_USER_ID));
-  document.querySelector('meta[name="current-user-name"]')
+  document
+    .querySelector('meta[name="current-user-name"]')
     ?.setAttribute("content", CURRENT_USER_NAME);
 
   // ===== state (단 1번만!) =====
   const state = {
     userId: CURRENT_USER_ID,
-    groups: [],                      // {id, name, checked}
-    personalSchedules: [],           // schedule[]
-    groupSchedulesByGroupId: new Map(), // groupId -> schedule[]
+    groups: [], // {id: string, name, checked}
+    personalSchedules: [], // schedule[]
+    groupSchedulesByGroupId: new Map(), // groupId(string) -> schedule[]
     calendar: null,
   };
 
@@ -56,7 +66,19 @@
     if (!iso) return "";
     const d = new Date(iso);
     const pad = (n) => String(n).padStart(2, "0");
-    return `${d.getMonth() + 1}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    return `${d.getMonth() + 1}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(
+      d.getMinutes()
+    )}`;
+  };
+
+  // 배열 중복 제거( id 기준 )
+  const uniqById = (arr) => {
+    const m = new Map();
+    for (const item of arr) {
+      if (!item?.id) continue;
+      m.set(String(item.id), item);
+    }
+    return [...m.values()];
   };
 
   function normalizeScheduleDto(dto, groupIdOrNull) {
@@ -72,30 +94,31 @@
       title,
       startAt,
       endAt,
-      groupId: groupIdOrNull,
+      groupId: groupIdOrNull == null ? null : String(groupIdOrNull),
       isPersonal: groupIdOrNull == null,
     };
   }
 
   function getGroupName(groupId) {
-    const g = state.groups.find((gg) => String(gg.id) === String(groupId));
+    const gid = String(groupId);
+    const g = state.groups.find((gg) => String(gg.id) === gid);
     return g ? g.name : "그룹";
   }
-  
+
   function setLoading(on, text = "불러오는 중...") {
-	  const el = document.getElementById("loadingOverlay");
-	  if (!el) return;
-	  const label = el.querySelector(".fw-bold");
-	  if (label) label.textContent = text;
-	
-	  if (on) {
-	    el.classList.remove("d-none");
-	    el.classList.add("d-flex");
-	  } else {
-	    el.classList.add("d-none");
-	    el.classList.remove("d-flex");
-	  }
-	}  
+    const el = document.getElementById("loadingOverlay");
+    if (!el) return;
+    const label = el.querySelector(".fw-bold");
+    if (label) label.textContent = text;
+
+    if (on) {
+      el.classList.remove("d-none");
+      el.classList.add("d-flex");
+    } else {
+      el.classList.add("d-none");
+      el.classList.remove("d-flex");
+    }
+  }
 
   // =========================
   // API (GET)
@@ -104,7 +127,7 @@
     const res = await fetch(url, {
       method: "GET",
       credentials: "same-origin",
-      headers: { "Accept": "application/json" },
+      headers: { Accept: "application/json" },
     });
 
     if (!res.ok) {
@@ -126,31 +149,43 @@
     const url = `/personal-schedules?ownerId=${state.userId}`;
     const data = await fetchJson(url);
 
-    const list = Array.isArray(data) ? data : (data?.content || data?.data || []);
-    state.personalSchedules = list.map((dto) => normalizeScheduleDto(dto, null)).filter(Boolean);
+    const list = Array.isArray(data) ? data : data?.content || data?.data || [];
+    const norm = list.map((dto) => normalizeScheduleDto(dto, null)).filter(Boolean);
+    state.personalSchedules = uniqById(norm);
   }
 
   async function loadGroups() {
     const url = `/groups/users?currentUserId=${state.userId}&page=0&size=50`;
     const data = await fetchJson(url);
 
-    const arr = Array.isArray(data) ? data : (data?.content || data?.data || []);
-    state.groups = arr.map((dto) => {
-      const id = pick(dto, ["groupId", "group_id", "id"]);
-      const name = pick(dto, ["groupName", "group_name", "name", "title"]) || `그룹 ${id}`;
-      if (!id) return null;
-      return { id, name, checked: true };
-    }).filter(Boolean);
+    const arr = Array.isArray(data) ? data : data?.content || data?.data || [];
+
+    // 그룹 id 문자열 통일 + 중복 제거 + 처음엔 전부 체크
+    const seen = new Set();
+    state.groups = arr
+      .map((dto) => {
+        const idRaw = pick(dto, ["groupId", "group_id", "id"]);
+        const name = pick(dto, ["groupName", "group_name", "name", "title"]);
+        if (!idRaw) return null;
+
+        const id = String(idRaw);
+        return { id, name: name || `그룹 ${id}`, checked: true };
+      })
+      .filter(Boolean)
+      .filter((g) => (seen.has(g.id) ? false : (seen.add(g.id), true)));
   }
 
   async function loadGroupSchedulesForAllGroups() {
+    state.groupSchedulesByGroupId.clear();
+
     const promises = state.groups.map(async (g) => {
-      const url = `/groups/${g.id}/schedules`;
+      const gid = String(g.id);
+      const url = `/groups/${gid}/schedules`;
       const data = await fetchJson(url);
 
-      const list = Array.isArray(data) ? data : (data?.content || data?.data || []);
-      const norm = list.map((dto) => normalizeScheduleDto(dto, g.id)).filter(Boolean);
-      state.groupSchedulesByGroupId.set(g.id, norm);
+      const list = Array.isArray(data) ? data : data?.content || data?.data || [];
+      const norm = list.map((dto) => normalizeScheduleDto(dto, gid)).filter(Boolean);
+      state.groupSchedulesByGroupId.set(gid, uniqById(norm));
     });
 
     await Promise.all(promises);
@@ -159,6 +194,7 @@
   // =========================
   // 데이터 합치기 / 이벤트 생성
   // =========================
+  // 왼쪽(다가오는 일정)은 "항상 전체" (체크 여부 무시)
   function getAllMySchedules() {
     const all = [...state.personalSchedules];
     for (const [, list] of state.groupSchedulesByGroupId.entries()) all.push(...list);
@@ -182,19 +218,23 @@
     // 그룹 일정 (체크된 그룹만)
     for (const g of state.groups) {
       if (!g.checked) continue;
-      const list = state.groupSchedulesByGroupId.get(g.id) || [];
+      const gid = String(g.id);
+      const list = state.groupSchedulesByGroupId.get(gid) || [];
       for (const s of list) {
         events.push({
           id: s.id,
           title: s.title,
           start: s.startAt,
           end: s.endAt,
-          extendedProps: { groupId: g.id, isPersonal: false },
+          extendedProps: { groupId: gid, isPersonal: false },
         });
       }
     }
 
-    return events;
+    // 마지막 방어(같은 id 이벤트 중복 제거)
+    const m = new Map();
+    for (const e of events) m.set(String(e.id), e);
+    return [...m.values()];
   }
 
   // =========================
@@ -246,18 +286,14 @@
       li.appendChild(bottom);
 
       li.addEventListener("click", () => {
-        // const base = s.isPersonal ? "/personal-schedules" : "/group-schedules";
-        // window.location.href = `${base}/${s.id}`;
-        /** 수정 **/
         const params = new URLSearchParams();
         params.set("scheduleId", s.id);
 
         if (!s.isPersonal && s.groupId) {
-          params.set("groupId", s.groupId);
+          params.set("groupId", String(s.groupId));
         }
 
         window.location.href = `/pages/schedule-detail.html?${params.toString()}`;
-        /** 수정 **/
       });
 
       ul.appendChild(li);
@@ -280,7 +316,8 @@
 
     state.groups.forEach((g) => {
       const li = document.createElement("li");
-      li.className = "list-group-item d-flex justify-content-between align-items-center group-item";
+      li.className =
+        "list-group-item d-flex justify-content-between align-items-center group-item";
 
       const left = document.createElement("div");
       left.className = "d-flex align-items-center gap-2";
@@ -288,10 +325,12 @@
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.checked = g.checked;
-      checkbox.addEventListener("click", (e) => {
+
+      // ✅ 그룹별 독립 토글: 체크 풀면 "그 그룹 일정만" 달력에서 사라짐
+      checkbox.addEventListener("change", (e) => {
         e.stopPropagation();
         g.checked = checkbox.checked;
-        refreshCalendar();
+        refreshCalendar(); // 달력만 갱신(왼쪽 다가오는 일정은 전체 유지)
       });
 
       const nameBtn = document.createElement("button");
@@ -300,7 +339,7 @@
       nameBtn.textContent = g.name;
       nameBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        window.location.href = `/groups/${g.id}/calendar`;
+        window.location.href = `/groups/${String(g.id)}/calendar`;
       });
 
       left.appendChild(checkbox);
@@ -341,21 +380,16 @@
       events: buildCalendarEvents(),
 
       eventClick: (info) => {
-        // const ext = info.event.extendedProps || {};
-        // const base = ext.isPersonal ? "/personal-schedules" : "/group-schedules";
-        // window.location.href = `${base}/${info.event.id}`;
-        /** 수정 **/
         const ext = info.event.extendedProps || {};
         const params = new URLSearchParams();
 
-        params.set("scheduleId", info.event.id);
+        params.set("scheduleId", String(info.event.id));
 
         if (!ext.isPersonal && ext.groupId) {
-          params.set("groupId", ext.groupId);
+          params.set("groupId", String(ext.groupId));
         }
 
         window.location.href = `/pages/schedule-detail.html?${params.toString()}`;
-        /** 수정 **/
       },
     });
 
@@ -364,7 +398,14 @@
 
   function refreshCalendar() {
     if (!state.calendar) return;
-    state.calendar.removeAllEvents();
+
+    // eventSource 누적 방지(안전)
+    try {
+      state.calendar.getEventSources().forEach((src) => src.remove());
+    } catch {
+      state.calendar.removeAllEvents();
+    }
+
     state.calendar.addEventSource(buildCalendarEvents());
   }
 
@@ -373,16 +414,14 @@
   // =========================
   function bindButtons() {
     const goScheduleForm = () => {
-      // TODO: 실제 일정 생성 페이지 URL로 변경
-      window.location.href = "/pages/schedule-form.html"; /** 수정 **/ // window.location.href = "/schedules/new"; // 임시
+      window.location.href = "/pages/schedule-form.html";
     };
     const goGroupForm = () => {
-      // TODO: 실제 그룹 생성 페이지 URL로 변경
-      window.location.href = "/groups/page/new"; // 임시
+      window.location.href = "/groups/page/new";
     };
     const goGroupList = () => {
-		window.location.href = "/groups/page/list"
-	}
+      window.location.href = "/groups/page/list";
+    };
 
     ["btn-header-add-schedule", "btn-side-add-schedule"].forEach((id) => {
       $(id)?.addEventListener("click", goScheduleForm);
@@ -391,11 +430,12 @@
     ["btn-header-add-group", "btn-side-add-group"].forEach((id) => {
       $(id)?.addEventListener("click", goGroupForm);
     });
-    
-    ["btn-side-reg-group"].forEach((id) => {
-	  $(id)?.addEventListener("click", goGroupList);
-	});
 
+    ["btn-side-reg-group"].forEach((id) => {
+      $(id)?.addEventListener("click", goGroupList);
+    });
+
+    // (있으면) 전체 체크 / 전체 해제 버튼
     $("btnCheckAllGroups")?.addEventListener("click", () => {
       state.groups.forEach((g) => (g.checked = true));
       renderGroupList();
@@ -415,11 +455,11 @@
   async function bootstrap() {
     bindButtons();
 
-    // 1) 일단 빈 달력이라도 먼저 띄우기 (사용자 체감 개선 + 디버깅 쉬움)
+    // 1) 일단 빈 달력이라도 먼저 띄우기
     renderGroupList();
     renderUpcomingList();
     initCalendar();
-    
+
     setLoading(true, "불러오는 중...");
 
     // 2) 데이터 로딩 후 리프레시
@@ -433,10 +473,9 @@
       refreshCalendar();
     } catch (e) {
       console.error("초기 로딩 중 오류:", e);
-      // 에러나도 이미 빈 달력은 떠있음
     } finally {
-		setLoading(false);
-	}
+      setLoading(false);
+    }
   }
 
   document.addEventListener("DOMContentLoaded", bootstrap);
