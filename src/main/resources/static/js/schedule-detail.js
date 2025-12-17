@@ -413,3 +413,15 @@ function fmt(dt) {
     return dt ? dt.replace("T", " ").slice(0, 16) : "";
 }
 
+/* ======================
+   메인으로 이동 버튼
+====================== */
+const goMainBtn = document.getElementById("goMainBtn");
+
+if (goMainBtn) {
+    goMainBtn.addEventListener("click", () => {
+        location.href = "/main"; // 메인 경로
+    });
+}
+
+

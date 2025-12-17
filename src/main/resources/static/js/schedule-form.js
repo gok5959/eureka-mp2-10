@@ -198,3 +198,14 @@ scheduleForm.addEventListener("submit", async (e) => {
     location.href = `/pages/schedule-detail.html?${nextParams.toString()}`;
 });
 
+
+/* ======================
+   메인으로 이동 버튼
+====================== */
+const goMainBtn = document.getElementById("goMainBtn");
+
+if (goMainBtn) {
+    goMainBtn.addEventListener("click", () => {
+        location.href = "/main"; // 메인 경로
+    });
+}
