@@ -56,9 +56,22 @@ apiFetch(detailUrl)
 
 function renderSchedule(data) {
 
-    console.log("📌 schedule detail data:", data); // ✅ 여기!!!!!
+    console.log("📌 schedule detail data:", data);
 
     titleEl.innerText = data.title;
+
+    /*=====
+    작성자 이름
+     */
+    const ownerNameEl = document.getElementById("ownerName");
+    if (ownerNameEl) {
+        ownerNameEl.innerText = data.ownerName
+            ? `작성자: ${data.ownerName}`
+            : "";
+    }
+
+
+
     descriptionEl.innerText = data.description || "";
     timeEl.innerText = `${fmt(data.startAt)} ~ ${fmt(data.endAt)}`;
     placeEl.innerText = data.placeName ? `📍 ${data.placeName}` : "";
@@ -79,6 +92,8 @@ function renderSchedule(data) {
     renderAttachments(data.attachments || [], data.ownerId);
     renderComments(data.comments || []);
 }
+
+
 
 /* ======================
    게시글 수정 / 삭제
@@ -296,9 +311,16 @@ function renderComments(list) {
         wrapper.style.borderBottom = "1px solid #ddd";
         wrapper.style.padding = "6px 0";
 
-        const contentSpan = document.createElement("span");
+
+        const header = document.createElement("div");
+        header.style.fontWeight = "bold";
+        header.innerText = c.userName; // 🔥 name 사용
+
+        const contentSpan = document.createElement("div");
         contentSpan.innerText = c.content;
-        wrapper.appendChild(contentSpan);
+
+        wrapper.append(header, contentSpan);
+
 
         /* 🔥 댓글 작성자만 수정/삭제 */
         if (c.userId === currentUserId) {
